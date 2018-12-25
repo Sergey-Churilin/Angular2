@@ -1,0 +1,11 @@
+.container-wrapper{
+  padding: 0 10px;
+}
+.btn-info{
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+.course{
+  border: 1px solid black;
+}

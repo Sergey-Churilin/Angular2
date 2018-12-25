@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+
 import {Course} from '../course.model';
 @Component({
   selector: 'app-course-list-item',
@@ -7,10 +8,13 @@ import {Course} from '../course.model';
 })
 export class CourseListItemComponent implements OnInit {
   @Input() course: Course;
-  constructor() { }
 
-  ngOnInit() {
-    // this.course = new Course(1, 'Course1', 60, 'Best Course' );
+  @Output() delete: EventEmitter<Course> = new EventEmitter<Course>();
+
+  ngOnInit() {}
+
+  onDeleteCourse() {
+    this.delete.emit(this.course);
   }
 
 }
