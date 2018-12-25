@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import {CourseListItemComponent} from '../course-list-item/course-list-item.component';
+import { OnInit, OnChanges, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked,
+  Component, Input, Output, EventEmitter } from '@angular/core';
+
 import {Course} from '../course.model';
 
 @Component({
@@ -7,12 +8,41 @@ import {Course} from '../course.model';
   templateUrl: './course-list.component.html',
   styleUrls: ['./course-list.component.css']
 })
-export class CourseListComponent implements OnInit {
-  public courses: Array<Course>;
+
+export class CourseListComponent implements OnInit, OnChanges, DoCheck, AfterContentInit,
+  AfterContentChecked, AfterViewInit, AfterViewChecked {
+  @Input() courses: Array<Course>;
+
+  @Output() delete: EventEmitter<Course> = new EventEmitter<Course>();
+
   constructor() { }
 
   ngOnInit() {
-    this.courses = [ new Course(1, 'Course1', 60, 'Best Course' ) ];
+    console.log('ngOnInit');
   }
 
+  onDeleteTask(course: Course) {
+    this.delete.emit(course);
+  }
+
+  ngOnChanges() {
+    console.log('ngOnChanges');
+  }
+
+  ngDoCheck() {
+    console.log('ngDoCheck');
+  }
+  ngAfterContentInit() {
+    console.log('ngAfterContentInit');
+  }
+  ngAfterContentChecked() {
+    console.log('ngAfterContentChecked');
+  }
+
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+  }
+  ngAfterViewChecked() {
+    console.log('ngAfterViewChecked');
+  }
 }

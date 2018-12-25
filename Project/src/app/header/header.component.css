@@ -1,0 +1,17 @@
+header{
+  display: flex;
+  justify-content: space-between;
+  background: aquamarine;
+  padding: 10px;
+}
+.login{
+  display: flex;
+  justify-content: space-between;
+}
+.loggedUserName{
+  padding-top: 12px;
+  margin-right: 10px;
+}
+.btnLogout{
+
+}
