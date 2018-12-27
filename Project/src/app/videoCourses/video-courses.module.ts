@@ -9,6 +9,10 @@ import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 import {VideoCoursesComponent} from './video-courses/video-courses.component';
 import {DurationPipe, OrderByPipe, FilterPipe} from '../pipes';
 import {BorderDirective} from '../directives/border.directive';
+import {AddCourseComponent} from './add-course/add-course.component';
+import {DateComponent} from './date/date.component';
+import {DurationComponent} from './duration/duration.component';
+import {AuthorsComponent} from './authors/authors.component';
 
 @NgModule({
   imports: [
@@ -21,6 +25,10 @@ import {BorderDirective} from '../directives/border.directive';
     CourseListItemComponent,
     BreadcrumbsComponent,
     VideoCoursesComponent,
+    AddCourseComponent,
+    DateComponent,
+    DurationComponent,
+    AuthorsComponent,
 
     BorderDirective,
 

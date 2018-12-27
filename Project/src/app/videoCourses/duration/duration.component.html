@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label for="duration">Duration</label>
+  <input type="number" class="form-control" name="duration" id="duration" [(ngModel)]="durationMinutes" required
+         placeholder="88">
+  <span>{{durationMinutes | duration}}</span>
+</div>
