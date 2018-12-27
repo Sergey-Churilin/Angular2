@@ -17,12 +17,15 @@ export class VideoCoursesComponent implements OnInit {
   constructor(private filterPipe: FilterPipe, private dataService: DataService) { }
 
   ngOnInit() {
-    this.courses = this.dataService.getList();
-    this.filteredCourses = this.courses.slice();
+    this.getData();
   }
 
   onDeleteTask(course: Course) {
-    console.log(course.id);
+    const confirm = window.confirm('Do you really want to delete this course? ');
+    if (confirm) {
+      this.dataService.removeItem(course);
+      this.getData();
+    }
   }
 
   onLoadMore() {
@@ -31,5 +34,10 @@ export class VideoCoursesComponent implements OnInit {
 
   onSearch(searchText) {
     this.filteredCourses = this.filterPipe.transform(this.courses, searchText);
+  }
+
+  private getData(){
+    this.courses = this.dataService.getList();
+    this.filteredCourses = this.courses.slice();
   }
 }

@@ -46,6 +46,7 @@ export class DataService {
         index = i;
       }
     });
+    console.log(index);
     courses.splice(index, 1);
   }
 

@@ -7,11 +7,8 @@ import {CourseListComponent} from './course-list/course-list.component';
 import {CourseListItemComponent} from './course-list-item/course-list-item.component';
 import {BreadcrumbsComponent} from './breadcrumbs/breadcrumbs.component';
 import {VideoCoursesComponent} from './video-courses/video-courses.component';
-import {FooterComponent} from '../footer/footer.component';
-import {HeaderComponent} from '../header/header.component';
 import {DurationPipe, OrderByPipe, FilterPipe} from '../pipes';
 import {BorderDirective} from '../directives/border.directive';
-import {DataService} from './data-service.service';
 
 @NgModule({
   imports: [
@@ -29,10 +26,7 @@ import {DataService} from './data-service.service';
 
     DurationPipe,
     OrderByPipe,
-    FilterPipe,
-    HeaderComponent,
-    FooterComponent],
-  // providers: [DataService]
+    FilterPipe]
 })
 export class VideoCoursesModule {
 }
