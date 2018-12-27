@@ -21,7 +21,7 @@ export class CourseListComponent implements OnInit, OnChanges, DoCheck, AfterCon
     console.log('ngOnInit');
   }
 
-  onDeleteTask(course: Course) {
+  onDeleteCourse(course: Course) {
     this.delete.emit(course);
   }
 

@@ -1,25 +1,48 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import {Component} from '@angular/core';
 
 import { CourseListItemComponent } from './course-list-item.component';
+import {Course} from '../course.model';
+
+@Component({
+  template: `
+    <app-course-list-item
+      *ngFor="let course of courses"
+      [course]="course"
+      (delete)="onDeleteCourse($event)">
+    </app-course-list-item>`
+})
+
+class TestCourseListComponent {
+  public courses: Array<Course> = [{id: 1, title: 'Course1', duration: 50, description: 'Description',
+    creationDate: new Date(2011, 0, 1, 2, 3, 4, 567)}];
+    public deletedItem: Course;
+    public onDeleteCourse(course: Course) {this.deletedItem = course; }
+}
 
 describe('CourseListItemComponent', () => {
-  let component: CourseListItemComponent;
-  let fixture: ComponentFixture<CourseListItemComponent>;
+  let component: TestCourseListComponent;
+  let fixture: ComponentFixture<TestCourseListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CourseListItemComponent ]
-    })
-    .compileComponents();
+      declarations: [ CourseListItemComponent, TestCourseListComponent ]
+    });
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CourseListItemComponent);
+    fixture = TestBed.createComponent(TestCourseListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should raise deleted item', () => {
+    fixture.detectChanges();
+
+    const expectedDeletedItem = {id: 1, title: 'Course1', duration: 50, description: 'Description',
+      creationDate: new Date(2011, 0, 1, 2, 3, 4, 567)};
+      const btnDelete = fixture.debugElement.query(By.css('.btn-danger'));
+      btnDelete.triggerEventHandler('click', null);
+      expect(component.deletedItem).toEqual(expectedDeletedItem);
   });
 });
