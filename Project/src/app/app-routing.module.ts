@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {VideoCoursesComponent} from './video-courses/video-courses.component';
+import {VideoCoursesComponent} from './videoCourses/video-courses/video-courses.component';
 
 const routes: Routes = [
   { path: 'home', component: VideoCoursesComponent },

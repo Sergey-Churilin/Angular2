@@ -1,5 +1,6 @@
 .container-wrapper{
   padding: 0 10px;
+  margin-bottom: 10px;
 }
 .btn-info{
   display: block;
@@ -8,4 +9,10 @@
 }
 .course{
   border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 10px;
+}
+.rated {
+  color: red;
 }
