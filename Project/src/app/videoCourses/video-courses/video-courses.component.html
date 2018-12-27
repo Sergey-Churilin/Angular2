@@ -1,0 +1,15 @@
+<div class="wrapper">
+  <app-header></app-header>
+  <app-breadcrumbs></app-breadcrumbs>
+  <app-search (search)="onSearch($event)"></app-search>
+  <app-course-list [courses]="filteredCourses" (delete)="onDeleteTask($event)"></app-course-list>
+  <div class="btn-wrapper">
+    <button type="button" class="btn btn-info load-more" (click)="onLoadMore()">
+      <span *ngIf="courses.length">Load more</span>
+      <span *ngIf="!courses.length">No date. Feel free to add new course</span>
+    </button>
+  </div>
+</div>
+<app-footer></app-footer>
+
+

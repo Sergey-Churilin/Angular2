@@ -4,6 +4,7 @@ export class Course {
     public title: string,
     public duration: number,
     public description: string,
+    public topRated: boolean,
     public creationDate?: any
   ) {
     this.id = id || null;

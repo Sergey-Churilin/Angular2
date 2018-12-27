@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import {Course} from '../course.model';
+
 @Component({
   selector: 'app-course-list-item',
   templateUrl: './course-list-item.component.html',
@@ -11,7 +12,7 @@ export class CourseListItemComponent implements OnInit {
 
   @Output() delete: EventEmitter<Course> = new EventEmitter<Course>();
 
-  ngOnInit() {}
+  ngOnInit() {console.log(this.course.creationDate); }
 
   onDeleteCourse() {
     this.delete.emit(this.course);
