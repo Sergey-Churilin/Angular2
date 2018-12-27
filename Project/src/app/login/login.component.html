@@ -1,0 +1,13 @@
+<form>
+  <div class="form-group">
+    <label for="email">Email *Required</label>
+    <input type="email" class="form-control" name="email" id="email" [(ngModel)]="loginData.email" required
+           placeholder="Please enter email">
+  </div>
+  <div class="form-group">
+    <label for="pass">Password *Required</label>
+    <input type="password" class="form-control" name="pass" id="pass" [(ngModel)]="loginData.password" required
+           placeholder="Please enter password">
+  </div>
+  <button type="submit" class="btn btn-info" (click)="logIn()">Login</button>
+</form>

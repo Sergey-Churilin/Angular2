@@ -1,0 +1,9 @@
+/*.wrapper{
+  height: 100%;
+  margin-bottom: -40px;
+}*/
+.wrapper {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding-bottom: 40px;
+}
