@@ -11,7 +11,7 @@ import {DataService} from '../data-service.service';
   providers: [FilterPipe]
 })
 export class VideoCoursesComponent implements OnInit {
-  private courses: Array<Course> = [];
+  public courses: Array<Course> = [];
   public filteredCourses: Array<Course> = [];
 
   constructor(private filterPipe: FilterPipe, private dataService: DataService) { }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import {AuthorizationService} from '../authorization.service';
+import {User} from '../user.model';
 
 @Component({
   selector: 'app-login',
@@ -8,7 +9,7 @@ import {AuthorizationService} from '../authorization.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public loginData: object = {
+  public loginData: Partial<User> = {
     email: '',
     password: ''
   };
