@@ -33,9 +33,13 @@ export class CourseListComponent implements OnInit {
     // .subscribe(course => this.course = {...course}, err => console.log(err));
 
       .subscribe(params => {
-        const course = this.courseDataService.getItemById(+params.get('editedCourseId'));
-        if (course) {
-          this.editedCourse = course;
+        if (+params.get('editedCourseId')) {
+          this.courseDataService.getItemById(+params.get('editedCourseId'))
+            .then(course => {
+              if (course) {
+                this.editedCourse = course;
+              }
+            });
         }
       });
     console.log('ngOnInit');
