@@ -1,0 +1,18 @@
+.load-more{
+  width: 100%;
+}
+.searchRow{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+.btn-wrapper{
+  margin-top: 10px;
+  padding: 0 10px;
+}
+.btn-add{
+  max-height: 48px;
+  margin-top: 8px;
+  margin-right: 16px;
+}

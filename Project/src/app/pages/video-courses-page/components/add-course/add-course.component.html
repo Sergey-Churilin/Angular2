@@ -1,0 +1,18 @@
+<app-breadcrumbs [title]="breadCrumbsTitle" *ngIf="show"></app-breadcrumbs>
+<form>
+  <div class="form-group">
+    <label for="title">Title:</label>
+    <input type="text" class="form-control" name="title" id="title" [(ngModel)]="course.title" required
+           placeholder="Video Course">
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea class="form-control" name="description" id="description" [(ngModel)]="course.description" required
+    placeholder="Lorem Ipsum"></textarea>
+  </div>
+  <app-date [date]="course.creationDate" ></app-date>
+  <app-duration [duration]="course.duration"></app-duration>
+  <app-authors [authors]="course.authors"></app-authors>
+  <button type="submit" class="btn btn-info" (click)="onSave()">Save</button>
+  <button type="button" class="btn btn-danger" (click)="onCancel()">Cancel</button>
+</form>

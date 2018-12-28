@@ -1,0 +1,18 @@
+<section class="container-wrapper">
+  <div class="container-fluid course" [appBorder]="course.creationDate">
+    <div class="row">
+      <div class="col-sm-10">
+        <header class="row">
+          <h3 class="title col-sm-7">{{course.title | uppercase}} <span *ngIf="course.topRated" [ngClass]="{'rated': course.topRated}">*</span></h3>
+          <div class="duration col-sm-2">{{course.duration | duration}}</div>
+          <div class="date col-sm-3">{{course.creationDate | date}}</div>
+        </header>
+        <p class="description">{{course.description}}</p>
+      </div>
+      <div class="col-sm-2">
+        <button type="button" class="btn btn-info" (click)="onEditCourse()">Edit</button>
+        <button type="button" class="btn btn-danger" (click)="onDeleteCourse()">Delete</button>
+      </div>
+    </div>
+  </div>
+</section>
