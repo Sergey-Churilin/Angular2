@@ -30,6 +30,11 @@ export class VideoCoursesComponent implements OnInit {
     this.getData();
   }
 
+  onAddCourse() {
+    const link = ['add'];
+    this.router.navigate(link, {relativeTo: this.route});
+  }
+
   onEditCourse(course: Course) {
     const link = ['/courses/edit', course.id];
     this.router.navigate(link);
@@ -38,26 +43,36 @@ export class VideoCoursesComponent implements OnInit {
   onDeleteCourse(course: Course) {
     const confirm = window.confirm('Do you really want to delete this course? ');
     if (confirm) {
-      this.dataService.removeItem(course);
-      this.getData();
+      this.dataService.removeItem(course)
+        .then((res) => {
+          this.getData();
+        });
     }
   }
 
   onLoadMore() {
-    console.log('Load more');
-  }
-
-  onAddCourse() {
-    const link = ['add'];
-    this.router.navigate(link, {relativeTo: this.route});
+    this.dataService.getNextPage()
+      .then((courses) => {
+        this.courses = this.courses.concat(courses.map(c => {c.creationDate = new Date(c.creationDate); return c; }));
+        this.filteredCourses = this.courses.slice();
+      });
   }
 
   onSearch(searchText) {
-    this.filteredCourses = this.filterPipe.transform(this.courses, searchText);
+    // this.filteredCourses = this.filterPipe.transform(this.courses, searchText);
+
+    this.dataService.search(searchText)
+      .then((courses) => {
+        this.courses = courses.map(c => {c.creationDate = new Date(c.creationDate); return c; });
+        this.filteredCourses = this.courses.slice();
+      });
   }
 
   private getData() {
-    this.courses = this.dataService.getList();
-    this.filteredCourses = this.courses.slice();
+    this.dataService.getList()
+      .then((courses) => {
+        this.courses = courses.map(c => {c.creationDate = new Date(c.creationDate); return c; });
+        this.filteredCourses = this.courses.slice();
+      });
   }
 }

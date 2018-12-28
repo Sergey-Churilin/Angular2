@@ -37,18 +37,22 @@ export class AddCourseComponent implements OnInit {
       // .subscribe(course => this.course = {...course}, err => console.log(err));
 
       .subscribe(params => {
-        const course = this.courseDataService.getItemById(+params.get('id'));
-        if (course) {
-          this.course = course;
-          this.show = true;
-          this.breadCrumbsTitle = course.title;
-        }
+        this.courseDataService.getItemById(+params.get('id'))
+          .then((course) => {
+            if (course) {
+              course.creationDate = new Date(course.creationDate);
+              this.course = course;
+              this.show = true;
+              this.breadCrumbsTitle = course.title;
+            }
+          });
       });
   }
 
   onSave() {
-    this.courseDataService.updateItem(this.course as Course);
-    this.router.navigate(['/courses', {editedCourseId: this.course.id}]);
+    this.courseDataService.updateItem(this.course as Course)
+      .then(res => this.router.navigate(['/courses', {editedCourseId: this.course.id}]));
+
   }
 
   onCancel() {

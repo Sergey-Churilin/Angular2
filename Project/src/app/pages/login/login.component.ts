@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {AuthorizationService} from '../../authorization.service';
+import {AuthorizationService} from '../../core/authorization.service';
 import {User} from '../../user.model';
 import {Router} from "@angular/router";
 
@@ -21,12 +21,14 @@ export class LoginComponent implements OnInit {
   }
 
   logIn() {
-    this.authService.login(this.loginData);
-    if (this.authService.redirectUrl) {
-      this.router.navigate([this.authService.redirectUrl]);
-    } else {
-      this.router.navigate(['../courses']);
-    }
+    this.authService.login(this.loginData)
+      .then(() => {
+        if (this.authService.redirectUrl) {
+          this.router.navigate([this.authService.redirectUrl]);
+        } else {
+          this.router.navigate(['../courses']);
+        }
+      });
   }
 
 }

@@ -1,0 +1,91 @@
+{
+  "courses": [
+    {
+      "id": 1,
+      "title": "Course160",
+      "duration": 55,
+      "description": "Best Course 55min",
+      "topRated": false,
+      "creationDate": "2018-12-09T21:00:00.000Z",
+      "authors": ""
+    },
+    {
+      "id": 2,
+      "title": "Course2",
+      "duration": 120,
+      "description": "Best Course 2",
+      "topRated": false,
+      "creationDate": 1552165200000,
+      "authors": ""
+    },
+    {
+      "id": 4,
+      "title": "Course4",
+      "duration": 55,
+      "description": "Best Course4 160ert",
+      "topRated": false,
+      "creationDate": "2018-12-09T21:00:00.000Z",
+      "authors": ""
+    },
+    {
+      "id": 5,
+      "title": "Course5",
+      "duration": 120,
+      "description": "Best Course5",
+      "topRated": false,
+      "creationDate": 1552165200000,
+      "authors": ""
+    },
+    {
+      "id": 6,
+      "title": "Course6",
+      "duration": 260,
+      "description": "Best Course6",
+      "topRated": true,
+      "creationDate": 1545771600000,
+      "authors": ""
+    },
+    {
+      "id": 7,
+      "title": "Course7",
+      "duration": 55,
+      "description": "Best Course7",
+      "topRated": false,
+      "creationDate": 1544389200000,
+      "authors": ""
+    },
+    {
+      "id": 8,
+      "title": "Course8",
+      "duration": 120,
+      "description": "Best Course8",
+      "topRated": false,
+      "creationDate": 1552165200000,
+      "authors": ""
+    },
+    {
+      "id": 9,
+      "title": "Course9",
+      "duration": 260,
+      "description": "Best Course9",
+      "topRated": true,
+      "creationDate": 1545771600000,
+      "authors": ""
+    },
+    {
+      "title": "Course10",
+      "description": "Lorem Ipsum",
+      "creationDate": null,
+      "duration": null,
+      "authors": "",
+      "id": 10
+    }
+  ],
+  "profile": [
+    {
+      "email": "mavric2006@gmail.com",
+      "password": "1232131",
+      "id": 6611
+    }
+  ]
+}
