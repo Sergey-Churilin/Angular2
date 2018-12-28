@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 
 import {AuthorizationService} from '../authorization.service';
 
@@ -10,22 +10,29 @@ import {AuthorizationService} from '../authorization.service';
 })
 export class HeaderComponent implements OnInit {
   public showUserInfo: boolean;
+  public userName: string;
 
   constructor(public authService: AuthorizationService, private router: Router ) { }
 
   ngOnInit() {
-    this.adjustAuthState();
+    this.router.events.subscribe( event => {
+      if (event instanceof NavigationEnd) {
+        this.adjustAuthState();
+      }
+    });
   }
 
   logOut() {
     this.authService.logout();
+    this.router.navigate(['../login']);
     this.adjustAuthState();
   }
 
   private adjustAuthState() {
-    // this.showUserInfo = this.authService.isAuthenticated();
-    // TODO update logic
     this.showUserInfo = this.router.url !== '/login';
-    console.log(this.router.url)
+    const userInfo =  this.authService.getUserInfo();
+    if (userInfo) {
+      this.userName = userInfo.email;
+    }
   }
 }

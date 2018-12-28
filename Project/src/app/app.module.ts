@@ -1,12 +1,13 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule} from '@angular/platform-browser';
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import {VideoCoursesModule} from './videoCourses/video-courses.module';
-import {FooterComponent} from './footer/footer.component';
+import {AppComponent} from './app.component';
 import {HeaderComponent} from './header/header.component';
-import {LoginModule} from './login/login.module';
+import {FooterComponent} from './footer/footer.component';
+import {LoginModule} from './pages/login/login.module';
+import {VideoCoursesModule} from './pages/video-courses-page/video-courses.module';
+import {AppRoutingModule} from './app-routing.module';
+import {CoreModule} from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import {LoginModule} from './login/login.module';
   ],
   imports: [
     BrowserModule,
+    CoreModule,
     VideoCoursesModule,
     LoginModule,
     AppRoutingModule,
@@ -24,4 +26,5 @@ import {LoginModule} from './login/login.module';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

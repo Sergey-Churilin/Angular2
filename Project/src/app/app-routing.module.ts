@@ -1,18 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {VideoCoursesComponent} from './videoCourses/video-courses/video-courses.component';
-import {LoginComponent} from './login/login.component';
-import {AddCourseComponent} from './videoCourses/add-course/add-course.component';
+import {LoginComponent} from './pages/login/login.component';
+import {PageNotFoundComponent} from './pages/page-not-found/page-not-found.component';
 
 const routes: Routes = [
-  { path: 'home', component: VideoCoursesComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'add', component: AddCourseComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: '**', component: VideoCoursesComponent }
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
+  declarations: [PageNotFoundComponent],
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })

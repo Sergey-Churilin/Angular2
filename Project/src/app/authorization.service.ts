@@ -5,11 +5,12 @@ import {User} from './user.model';
   providedIn: 'root'
 })
 export class AuthorizationService {
+  public redirectUrl: string;
 
   constructor() { }
   // login(user: User) {
-  login() {
-    // localStorage.setItem('user', JSON.stringify(user));
+  login(loginData: Partial<User>) {
+    localStorage.setItem('user', JSON.stringify(loginData));
     console.log('logged in successfully');
   }
 
@@ -23,7 +24,7 @@ export class AuthorizationService {
 
   getUserInfo() {
     const user = localStorage.getItem('user');
-    return user && JSON.parse(user).login;
+    return user && JSON.parse(user) || null;
   }
 
 }
