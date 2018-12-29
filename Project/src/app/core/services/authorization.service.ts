@@ -1,22 +1,31 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Subject} from 'rxjs/internal/Subject';
 
-import {User} from '../user.model';
-import {Course} from "../pages/video-courses-page/course.model";
+import {User} from '../../user.model';
+import {LoadingService} from './loading.service';
+import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthorizationService {
   public redirectUrl: string;
+  public userInfo: BehaviorSubject<User> = new BehaviorSubject(this.getUserInfo());
   private baseUrl = 'http://localhost:3000/';
   private isAuthorized: boolean = false;
 
-  constructor( private http: HttpClient) { }
+  constructor( private http: HttpClient, private loadingService: LoadingService) { }
   login(loginData: Partial<User>) {
+    this.loadingService.showLoadingBlock(false);
+
     return this.addUser(loginData as User)
       .then(user => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
         localStorage.setItem('user', JSON.stringify(user));
+        this.userInfo.next(user);
       });
   }
 
@@ -24,17 +33,16 @@ export class AuthorizationService {
     const user = JSON.parse(localStorage.getItem('user'));
     this.removeUser(user)
       .then(() => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
         localStorage.clear();
+        this.userInfo.next(null);
       });
   }
 
   isAuthenticated() {
     return !!localStorage.getItem('user');
-  }
-
-  getUserInfo() {
-    const user = localStorage.getItem('user');
-    return user && JSON.parse(user) || null;
   }
 
   private addUser(user: User) {
@@ -74,7 +82,7 @@ export class AuthorizationService {
       });
   }
 
-  removeUser(user: User) {
+  private removeUser(user: User) {
     return this.http.delete(`${this.baseUrl}profile/${user.id}`)
       .toPromise()					        // Observeble to Promise
       .then(response => <User>response)	   // Promise API
@@ -82,5 +90,10 @@ export class AuthorizationService {
         console.log('Error message');
         return Promise.reject(error.message || error); // error for the caller
       });
+  }
+
+  private getUserInfo() {
+    const user = localStorage.getItem('user');
+    return user && JSON.parse(user) || null;
   }
 }

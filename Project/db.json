@@ -2,7 +2,7 @@
   "courses": [
     {
       "id": 1,
-      "title": "Course160",
+      "title": "Course1600",
       "duration": 55,
       "description": "Best Course 55min",
       "topRated": false,
@@ -16,15 +16,6 @@
       "description": "Best Course 2",
       "topRated": false,
       "creationDate": 1552165200000,
-      "authors": ""
-    },
-    {
-      "id": 4,
-      "title": "Course4",
-      "duration": 55,
-      "description": "Best Course4 160ert",
-      "topRated": false,
-      "creationDate": "2018-12-09T21:00:00.000Z",
       "authors": ""
     },
     {
@@ -84,8 +75,8 @@
   "profile": [
     {
       "email": "mavric2006@gmail.com",
-      "password": "1232131",
-      "id": 6611
+      "password": "adsadasdas",
+      "id": 156
     }
   ]
 }
