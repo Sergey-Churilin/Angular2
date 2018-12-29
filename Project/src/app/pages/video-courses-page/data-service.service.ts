@@ -4,6 +4,8 @@ import {Router} from '@angular/router';
 
 import {Course} from './course.model';
 import {DataServicesModule} from './data-services.module';
+import {LoadingService} from '../../core/services/loading.service';
+import {debounceTime, timeout, tap, delay} from 'rxjs/operators';
 
 @Injectable({
   providedIn: DataServicesModule
@@ -16,7 +18,8 @@ export class DataService {
 
   constructor(
               private http: HttpClient,
-              private router: Router
+              private router: Router,
+              private loadingService: LoadingService
   ) { }
 
   getList(): Promise<Course[]> {
@@ -31,6 +34,9 @@ export class DataService {
   }
 
   search(query: string) {
+    if (!query) {
+      return this.getList();
+    }
     const params = `q=${query}`;
     return this.getCourses(params);
   }
@@ -51,7 +57,12 @@ export class DataService {
         return this.http
           .put(`${this.baseUrl}courses/${course.id}`, body, options)
           .toPromise()					        // Observeble to Promise
-          .then(response => <Course[]>response)	   // Promise API
+          .then(response => {
+            setTimeout(() => {
+              this.loadingService.showLoadingBlock(false);
+            }, 1000);
+            return <Course[]>response;
+          })	   // Promise API
           .catch(error => {
             console.log('Error message');
             return Promise.reject(error.message || error); // error for the caller
@@ -61,7 +72,12 @@ export class DataService {
         return this.http
           .post(`${this.baseUrl}courses`, body, options)
           .toPromise()					        // Observeble to Promise
-          .then(response => <Course[]>response)	   // Promise API
+          .then(response => {
+            setTimeout(() => {
+              this.loadingService.showLoadingBlock(false);
+            }, 1000);
+            return <Course[]>response;
+          })	   // Promise API
           .catch(error => {
             console.log('Error message');
             return Promise.reject(error.message || error); // error for the caller
@@ -70,9 +86,15 @@ export class DataService {
   }
 
   removeItem(course: Course) {
+    this.loadingService.showLoadingBlock(true);
     return this.http.delete(`${this.baseUrl}courses/${course.id}`)
       .toPromise()					        // Observeble to Promise
-      .then(response => <Course[]>response)	   // Promise API
+      .then(response => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
+        return <Course[]>response;
+      })	   // Promise API
       .catch(error => {
         console.log('Error message');
         return Promise.reject(error.message || error); // error for the caller
@@ -80,21 +102,37 @@ export class DataService {
   }
 
   private getCourses(params): Promise<Course[]> {
-    return this.http.get(`${this.baseUrl}courses?${params}`)           // Observable
+    this.loadingService.showLoadingBlock(true);
+    return this.http.get(`${this.baseUrl}courses?${params}`)
+      .pipe(
+      timeout(2500)      )// Observable
       .toPromise()					        // Observeble to Promise
-      .then(response => <Course[]>response)	   // Promise API
+      .then(response => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
+        return <Course[]>response;
+      })	   // Promise API
       .catch(error => {
         console.log('Error message');
+        this.loadingService.showLoadingBlock(false);
         return Promise.reject(error.message || error); // error for the caller
       });
   }
 
   private getCourseById(id: any) {
-    return this.http.get(`${this.baseUrl}courses/${id}`)           // Observable
+    this.loadingService.showLoadingBlock(true);
+    return this.http.get(`${this.baseUrl}courses/${id}`)// Observable
       .toPromise()					        // Observeble to Promise
-      .then(response => <Course>response)	   // Promise API
+      .then(response => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000)
+        return <Course>response;
+      })	   // Promise API
       .catch(error => {
         console.log('Error message');
+        this.loadingService.showLoadingBlock(false);
         return Promise.reject(error.message || error); // error for the caller
       });
   }

@@ -1,8 +1,8 @@
 <div class="search-component">
   <div class="search">
     <label for="search"></label>
-    <input id="search" type="text" placeholder="Text to search" [(ngModel)]="searchText">
-    <button type="button" class="btn btn-success" (click)="onFind()">Search</button>
+    <input id="search" type="text" placeholder="Text to search" (keyup)="onFind($event.target.value)" [(ngModel)]="searchText">
+    <!--<button type="button" class="btn btn-success" (click)="onFind()">Search</button>--><!--(ngModelChange)="onFind($event)"-->
   </div>
 </div>
 

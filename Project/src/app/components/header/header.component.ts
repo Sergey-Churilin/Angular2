@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 
-import {AuthorizationService} from '../core/authorization.service';
+import {AuthorizationService} from '../../core/services/authorization.service';
 
 @Component({
   selector: 'app-header',
@@ -12,14 +12,24 @@ export class HeaderComponent implements OnInit {
   public showUserInfo: boolean;
   public userName: string;
 
-  constructor(public authService: AuthorizationService, private router: Router ) { }
+  constructor(public authService: AuthorizationService, private router: Router) {
+  }
 
   ngOnInit() {
-    this.router.events.subscribe( event => {
+    this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.adjustAuthState();
       }
     });
+
+    this.authService.userInfo
+      .subscribe((userInfo: any) => {
+          if (userInfo) {
+            this.userName = userInfo.email;
+          }
+        },
+        (error) => console.log(error)
+      );
   }
 
   logOut() {
@@ -30,9 +40,5 @@ export class HeaderComponent implements OnInit {
 
   private adjustAuthState() {
     this.showUserInfo = this.router.url !== '/login';
-    const userInfo =  this.authService.getUserInfo();
-    if (userInfo) {
-      this.userName = userInfo.email;
-    }
   }
 }
