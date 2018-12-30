@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {Store, select} from '@ngrx/store';
 
-import {FilterPipe} from '../../../../pipes/index';
+
+import {AppState} from '../../../../core/store';
+import * as CoursesActions from '../../../../core/store/courses/courses.actions';
+import {FilterPipe} from '../../../../pipes';
 import {Course} from '../../course.model';
 import {DataService} from '../../data-service.service';
 
@@ -12,15 +16,22 @@ import {DataService} from '../../data-service.service';
   providers: [FilterPipe]
 })
 export class VideoCoursesComponent implements OnInit {
-  public courses: Array<Course> = [];
-  public filteredCourses: Array<Course> = [];
+  courses: Array<Course> = [];
+  filteredCourses: Array<Course> = [];
 
-  constructor(private filterPipe: FilterPipe,
+  constructor(private store: Store<AppState>,
+              private filterPipe: FilterPipe,
               private dataService: DataService,
               private router: Router,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.store.pipe(select('courses'))
+      .subscribe((courses) => {
+        this.courses = courses.data.map(c => {c.creationDate = new Date(c.creationDate); return c; });
+        this.filteredCourses = this.courses.slice();
+      });
+
     this.router.events.subscribe( event => {
       // this code is not performed during first component init
       if (event instanceof NavigationEnd) {
@@ -43,19 +54,12 @@ export class VideoCoursesComponent implements OnInit {
   onDeleteCourse(course: Course) {
     const confirm = window.confirm('Do you really want to delete this course? ');
     if (confirm) {
-      this.dataService.removeItem(course)
-        .then((res) => {
-          this.getData();
-        });
+      this.store.dispatch(new CoursesActions.DeleteCourse(course));
     }
   }
 
   onLoadMore() {
-    this.dataService.getNextPage()
-      .then((courses) => {
-        this.courses = this.courses.concat(courses.map(c => {c.creationDate = new Date(c.creationDate); return c; }));
-        this.filteredCourses = this.courses.slice();
-      });
+    this.store.dispatch(new CoursesActions.GetCoursesMore());
   }
 
   onSearch(searchText) {
@@ -69,10 +73,6 @@ export class VideoCoursesComponent implements OnInit {
   }
 
   private getData() {
-    this.dataService.getList()
-      .then((courses) => {
-        this.courses = courses.map(c => {c.creationDate = new Date(c.creationDate); return c; });
-        this.filteredCourses = this.courses.slice();
-      });
+    this.store.dispatch(new CoursesActions.GetCourses());
   }
 }

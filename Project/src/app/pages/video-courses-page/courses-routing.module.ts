@@ -5,10 +5,6 @@ import {VideoCoursesComponent, AddCourseComponent, VideoCoursesPageComponent} fr
 import {AuthGuard} from '../../core/guards/auth.guard';
 
 const routes: Routes = [
-  /*{ path: 'courses', component: VideoCoursesComponent },
-  { path: 'courses/:id', component: AddCourseComponent },
-  { path: 'courses/new', component: AddCourseComponent },
-  { path: '', redirectTo: '/courses', pathMatch: 'full' }*/
   { path: 'courses',
     component: VideoCoursesPageComponent,
     canActivate: [AuthGuard],

@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 
 import {Course} from './course.model';
 import {DataServicesModule} from './data-services.module';
 import {LoadingService} from '../../core/services/loading.service';
-import {debounceTime, timeout, tap, delay} from 'rxjs/operators';
+import {timeout} from 'rxjs/operators';
 
 @Injectable({
   providedIn: DataServicesModule
@@ -13,24 +13,24 @@ import {debounceTime, timeout, tap, delay} from 'rxjs/operators';
 
 export class DataService {
   private baseUrl = 'http://localhost:3000/';
-  private curPage: number = 0;
+  private curPage: number = 1;
   private limit: number = 3;
 
   constructor(
-              private http: HttpClient,
-              private router: Router,
-              private loadingService: LoadingService
-  ) { }
+    private http: HttpClient,
+    private router: Router,
+    private loadingService: LoadingService
+  ) {
+  }
 
   getList(): Promise<Course[]> {
-    const params = `_start=${this.curPage * this.limit}&_limit=${this.limit}`;
+    const params = `_page=${this.curPage}&_limit=${this.limit}`;
     return this.getCourses(params);
   }
 
   getNextPage(): Promise<Course[]> {
     this.curPage++;
-    const params = `_start=${this.curPage * this.limit}&_limit=${this.limit}`;
-    return this.getCourses(params);
+    return this.getList();
   }
 
   search(query: string) {
@@ -46,43 +46,46 @@ export class DataService {
   }
 
   updateItem(course: Course) {
-      const url = this.router.url;
-      const body = JSON.stringify(course);
-      const options = {
-        headers: new HttpHeaders({'Content-Type' : 'application/json'})
-      };
+    const url = this.router.url;
+    const body = JSON.stringify(course);
+    const options = {
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    };
+    return this.http
+      .put(`${this.baseUrl}courses/${course.id}`, body, options)
+      .toPromise()
+      .then(response => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
+        return <Course>response;
+      })
+      .catch(error => {
+        console.log('Error message');
+        return Promise.reject(error.message || error);
+      });
 
-      if (url.indexOf('edit') !== -1) {
-        // update
-        return this.http
-          .put(`${this.baseUrl}courses/${course.id}`, body, options)
-          .toPromise()					        // Observeble to Promise
-          .then(response => {
-            setTimeout(() => {
-              this.loadingService.showLoadingBlock(false);
-            }, 1000);
-            return <Course[]>response;
-          })	   // Promise API
-          .catch(error => {
-            console.log('Error message');
-            return Promise.reject(error.message || error); // error for the caller
-          });
-      } else {
-        //create
-        return this.http
-          .post(`${this.baseUrl}courses`, body, options)
-          .toPromise()					        // Observeble to Promise
-          .then(response => {
-            setTimeout(() => {
-              this.loadingService.showLoadingBlock(false);
-            }, 1000);
-            return <Course[]>response;
-          })	   // Promise API
-          .catch(error => {
-            console.log('Error message');
-            return Promise.reject(error.message || error); // error for the caller
-          });
-      }
+  }
+
+  createItem(course: Course) {
+    const url = this.router.url;
+    const body = JSON.stringify(course);
+    const options = {
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    };
+    return this.http
+      .post(`${this.baseUrl}courses`, body, options)
+      .toPromise()
+      .then(response => {
+        setTimeout(() => {
+          this.loadingService.showLoadingBlock(false);
+        }, 1000);
+        return <Course>response;
+      })
+      .catch(error => {
+        console.log('Error message');
+        return Promise.reject(error.message || error);
+      });
   }
 
   removeItem(course: Course) {
@@ -93,11 +96,11 @@ export class DataService {
         setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
         }, 1000);
-        return <Course[]>response;
-      })	   // Promise API
+        return <Course>course;
+      })
       .catch(error => {
         console.log('Error message');
-        return Promise.reject(error.message || error); // error for the caller
+        return Promise.reject(error.message || error);
       });
   }
 
@@ -105,8 +108,9 @@ export class DataService {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses?${params}`)
       .pipe(
-      timeout(2500)      )// Observable
-      .toPromise()					        // Observeble to Promise
+        timeout(2500)
+      )
+      .toPromise()
       .then(response => {
         setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
@@ -116,25 +120,24 @@ export class DataService {
       .catch(error => {
         console.log('Error message');
         this.loadingService.showLoadingBlock(false);
-        return Promise.reject(error.message || error); // error for the caller
+        return Promise.reject(error.message || error);
       });
   }
 
-  private getCourseById(id: any) {
+  private getCourseById(id: number) {
     this.loadingService.showLoadingBlock(true);
-    return this.http.get(`${this.baseUrl}courses/${id}`)// Observable
-      .toPromise()					        // Observeble to Promise
+    return this.http.get(`${this.baseUrl}courses/${id}`)
+      .toPromise()
       .then(response => {
         setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
-        }, 1000)
+        }, 1000);
         return <Course>response;
-      })	   // Promise API
+      })
       .catch(error => {
         console.log('Error message');
         this.loadingService.showLoadingBlock(false);
-        return Promise.reject(error.message || error); // error for the caller
+        return Promise.reject(error.message || error);
       });
   }
-
 }

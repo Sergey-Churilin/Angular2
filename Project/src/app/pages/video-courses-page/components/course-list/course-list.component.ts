@@ -1,8 +1,8 @@
 import { OnInit,  Component, Input, Output, EventEmitter } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {Course} from '../../course.model';
-import {ActivatedRoute, Router} from "@angular/router";
-import {DataService} from "../../data-service.service";
+import {DataService} from '../../data-service.service';
 
 @Component({
   selector: 'app-course-list',
@@ -24,14 +24,6 @@ export class CourseListComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap
-    // TODO fix that pipe
-    // .pipe(
-    //   switchMap((params: Params) =>
-    //     this.courseDataService.getItemById(+params.get('id'))
-    //   )
-    // )
-    // .subscribe(course => this.course = {...course}, err => console.log(err));
-
       .subscribe(params => {
         if (+params.get('editedCourseId')) {
           this.courseDataService.getItemById(+params.get('editedCourseId'))
@@ -42,7 +34,6 @@ export class CourseListComponent implements OnInit {
             });
         }
       });
-    console.log('ngOnInit');
   }
 
   onEditCourse(course: Course) {
