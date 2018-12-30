@@ -1,21 +1,12 @@
 {
   "courses": [
     {
-      "id": 1,
-      "title": "Course1600",
-      "duration": 55,
-      "description": "Best Course 55min",
-      "topRated": false,
-      "creationDate": "2018-12-09T21:00:00.000Z",
-      "authors": ""
-    },
-    {
-      "id": 2,
-      "title": "Course2",
-      "duration": 120,
-      "description": "Best Course 2",
-      "topRated": false,
-      "creationDate": 1552165200000,
+      "id": 3,
+      "title": "Course3",
+      "duration": 260,
+      "description": "Best Course 3",
+      "topRated": true,
+      "creationDate": 1545771600000,
       "authors": ""
     },
     {
@@ -64,19 +55,19 @@
       "authors": ""
     },
     {
-      "title": "Course10",
-      "description": "Lorem Ipsum",
+      "id": 7330,
+      "title": "Course160",
+      "description": "123123",
       "creationDate": null,
       "duration": null,
-      "authors": "",
-      "id": 10
+      "authors": ""
     }
   ],
   "profile": [
     {
       "email": "mavric2006@gmail.com",
-      "password": "adsadasdas",
-      "id": 156
+      "password": "123123231",
+      "id": 2358
     }
   ]
 }

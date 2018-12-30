@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {EffectsModule} from '@ngrx/effects';
+import {StoreModule} from '@ngrx/store';
 
 import {LoginComponent} from './login.component';
+import {LoginEffects} from '../../core/store/login';
+import {loginReducer} from '../../core/store/login/login.reduces';
 
 @NgModule({
   declarations: [
@@ -10,7 +14,9 @@ import {LoginComponent} from './login.component';
   ],
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    StoreModule.forFeature('loginInfo', loginReducer),
+    EffectsModule.forFeature([LoginEffects])
   ]
 })
 export class LoginModule { }

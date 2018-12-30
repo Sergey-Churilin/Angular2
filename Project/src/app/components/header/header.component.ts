@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
+import {Store} from '@ngrx/store';
 
+import {AppState, getLoginData, getLoginState} from '../../core/store';
+import * as LoginActions from '../../core/store/login/login.actions';
 import {AuthorizationService} from '../../core/services/authorization.service';
 
 @Component({
@@ -8,12 +11,12 @@ import {AuthorizationService} from '../../core/services/authorization.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
+
 export class HeaderComponent implements OnInit {
   public showUserInfo: boolean;
   public userName: string;
 
-  constructor(public authService: AuthorizationService, private router: Router) {
-  }
+  constructor(private store: Store<AppState>, public authService: AuthorizationService, private router: Router) {}
 
   ngOnInit() {
     this.router.events.subscribe(event => {
@@ -27,15 +30,17 @@ export class HeaderComponent implements OnInit {
           if (userInfo) {
             this.userName = userInfo.email;
           }
+          this.adjustAuthState();
         },
         (error) => console.log(error)
       );
   }
 
   logOut() {
-    this.authService.logout();
-    this.router.navigate(['../login']);
-    this.adjustAuthState();
+    this.store.dispatch(new LoginActions.Logout());
+    // this.authService.logout();
+    // this.router.navigate(['../login']);
+    // this.adjustAuthState();
   }
 
   private adjustAuthState() {

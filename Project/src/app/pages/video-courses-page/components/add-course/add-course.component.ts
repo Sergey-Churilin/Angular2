@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Params, ParamMap, Router} from '@angular/router';
-import {ObservableInput} from "rxjs/internal/types";
-import {switchMap} from 'rxjs/operators';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
+import {Store, select} from '@ngrx/store';
+
+// rxjs
+import {Subscription} from 'rxjs';
+
+import {AppState, getSelectedCourse} from '../../../../core/store';
+import * as CoursesActions from '../../../../core/store/courses/courses.actions';
 import {Course} from '../../course.model';
 import {DataService} from '../../data-service.service';
 
@@ -11,52 +16,60 @@ import {DataService} from '../../data-service.service';
   templateUrl: './add-course.component.html',
   styleUrls: ['./add-course.component.css']
 })
-export class AddCourseComponent implements OnInit {
-  public course: Partial<Course> = {
+export class AddCourseComponent implements OnInit, OnDestroy {
+  course: Partial<Course> = {
+    id: null,
     title: '',
     description: '',
     creationDate: null,
     duration: null,
     authors: ''
   };
-  public show: boolean = false;
-  public breadCrumbsTitle: string;
+  show: boolean = false;
+  breadCrumbsTitle: string;
+  private sub: Subscription;
 
-  constructor(private route: ActivatedRoute,
-              private courseDataService: DataService,
-              private router: Router) { }
+  constructor(
+    private store: Store<AppState>,
+    private route: ActivatedRoute,
+    private courseDataService: DataService,
+    private router: Router) {
+  }
 
   ngOnInit() {
-    this.route.paramMap
-      // TODO fix that pipe
-      // .pipe(
-      //   switchMap((params: Params) =>
-      //     this.courseDataService.getItemById(+params.get('id'))
-      //   )
-      // )
-      // .subscribe(course => this.course = {...course}, err => console.log(err));
+    this.sub = this.store.pipe(select(getSelectedCourse))
+      .subscribe(course => {
+        if (course) {
+          (<Course>course).creationDate = new Date(course.creationDate);
+          this.course = course;
+          this.show = true;
+          this.breadCrumbsTitle = course.title;
+        }
+      });
 
+    this.route.paramMap
       .subscribe(params => {
-        this.courseDataService.getItemById(+params.get('id'))
-          .then((course) => {
-            if (course) {
-              course.creationDate = new Date(course.creationDate);
-              this.course = course;
-              this.show = true;
-              this.breadCrumbsTitle = course.title;
-            }
-          });
+        const id = params.get('id');
+        if (id) {
+          this.store.dispatch(new CoursesActions.GetCourse(+id));
+        }
       });
   }
 
-  onSave() {
-    this.courseDataService.updateItem(this.course as Course)
-      .then(res => this.router.navigate(['/courses', {editedCourseId: this.course.id}]));
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
 
+  onSave() {
+    if (this.course.id) {
+      this.store.dispatch(new CoursesActions.UpdateCourse(this.course as Course));
+    } else {
+      this.course.id = +(Math.random() * 10000).toFixed();
+      this.store.dispatch(new CoursesActions.CreateCourse(<Course>this.course));
+    }
   }
 
   onCancel() {
     this.router.navigate(['/courses']);
   }
-
 }

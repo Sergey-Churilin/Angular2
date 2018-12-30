@@ -7,9 +7,8 @@ import {Observable} from 'rxjs/internal/Observable';
 })
 export class CoursesIntercepter implements HttpInterceptor  {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // req MUST be immutable
     let clonedReq;
-    if (req.url.includes('courses')){
+    if (req.url.includes('courses')) {
       clonedReq = req.clone({
         params: new HttpParams()
           .set('ts_intercepter', Date.now().toString())
