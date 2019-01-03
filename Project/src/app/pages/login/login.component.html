@@ -1,13 +1,17 @@
-<form>
-  <div class="form-group">
+<form (ngSubmit)=logIn() [formGroup]="loginForm">
+  <div class="form-group" [ngClass]="{'has-error': validationMessage}">
     <label for="email">Email *Required</label>
-    <input type="email" class="form-control" name="email" id="email" [(ngModel)]="loginData.email" required
+    <p [ngClass]="{'has-error': validationMessage}" *ngIf="validationMessage">{{validationMessage}}</p>
+    <input type="email" class="form-control" formControlName="email" id="email"
            placeholder="Please enter email">
   </div>
   <div class="form-group">
-    <label for="pass">Password *Required</label>
-    <input type="password" class="form-control" name="pass" id="pass" [(ngModel)]="loginData.password" required
+    <label for="password">Password *Required</label>
+    <p *ngIf="hasError(loginForm.get('password'))" [ngClass]="{'has-error': hasError(loginForm.get('password'))}">
+      This field is required with min length 8
+    </p>
+    <input type="password" class="form-control" formControlName="password" id="password"
            placeholder="Please enter password">
   </div>
-  <button type="submit" class="btn btn-info" (click)="logIn()">Login</button>
+  <button type="submit" class="btn btn-info" [disabled]="!loginForm.valid">Login</button>
 </form>

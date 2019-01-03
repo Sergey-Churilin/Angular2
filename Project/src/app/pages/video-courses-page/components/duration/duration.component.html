@@ -1,6 +1,8 @@
-<div class="form-group">
+<div class="form-group"  [formGroup]="durationGroup" [ngClass]="{'has-error': hasError(durationGroup.get('durationInput'))}">
   <label for="duration">Duration</label>
-  <input type="number" class="form-control" name="duration" id="duration" [(ngModel)]="durationMinutes" required
-         placeholder="88">
+  <span *ngIf="hasError(durationGroup.get('durationInput'))" [ngClass]="{'has-error': hasError(durationGroup.get('durationInput'))}">
+      This field is required
+    </span>
+  <input type="number" class="form-control" [ngClass]="{'has-error': hasError(durationGroup.get('durationInput'))}" formControlName="durationInput" id="duration" placeholder="88">
   <span>{{durationMinutes | duration}}</span>
 </div>

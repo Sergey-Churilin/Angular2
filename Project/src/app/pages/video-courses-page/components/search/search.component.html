@@ -1,8 +1,7 @@
-<div class="search-component">
+<div class="search-component" [formGroup]="searchGroup">
   <div class="search">
     <label for="search"></label>
-    <input id="search" type="text" placeholder="Text to search" (keyup)="onFind($event.target.value)" [(ngModel)]="searchText">
-    <!--<button type="button" class="btn btn-success" (click)="onFind()">Search</button>--><!--(ngModelChange)="onFind($event)"-->
+    <input id="search" type="text" placeholder="Text to search" formControlName="searchInput">
   </div>
 </div>
 

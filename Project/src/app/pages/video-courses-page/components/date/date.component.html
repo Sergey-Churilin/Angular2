@@ -1,5 +1,7 @@
-<div class="form-group">
+<div class="form-group" [formGroup]="dateGroup">
   <label for="creationDate">Date</label>
-  <input type="text" class="form-control" name="creationDate" id="creationDate" [(ngModel)]="creationDate" required
-         placeholder="05.29.2018">
+  <span *ngIf="hasError(dateGroup.get('dateInput'))" [ngClass]="{'has-error': hasError(dateGroup.get('dateInput'))}">
+      This field is required with specific pattern
+    </span>
+  <input type="text" [ngClass]="{'has-error': hasError(dateGroup.get('dateInput'))}" class="form-control" id="creationDate" formControlName="dateInput" placeholder="dd/MM/yyyy">
 </div>

@@ -1,3 +1,5 @@
+import {Author} from './components/authors/author.model';
+
 export class Course {
   constructor(
     public id: number,
@@ -6,7 +8,7 @@ export class Course {
     public description: string,
     public topRated: boolean,
     public creationDate?: any,
-    public authors?: any
+    public authors?: Array<Author>
   ) {
     this.id = id || null;
     this.creationDate = creationDate || new Date();

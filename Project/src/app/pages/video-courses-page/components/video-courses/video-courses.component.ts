@@ -34,7 +34,7 @@ export class VideoCoursesComponent implements OnInit {
 
     this.router.events.subscribe( event => {
       // this code is not performed during first component init
-      if (event instanceof NavigationEnd) {
+      if (event instanceof NavigationEnd && event.url === '/courses') {
         this.getData();
       }
     });

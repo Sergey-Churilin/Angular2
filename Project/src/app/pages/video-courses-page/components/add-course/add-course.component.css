@@ -5,3 +5,9 @@ form{
   border: 1px solid gray;
   border-radius: 10px;
 }
+input.has-error, textarea.has-error {
+  border: 1px solid red;
+}
+span.has-error {
+  color: red;
+}

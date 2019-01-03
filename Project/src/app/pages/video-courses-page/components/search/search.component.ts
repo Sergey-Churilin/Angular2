@@ -1,4 +1,5 @@
 import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {Subject} from 'rxjs/internal/Subject';
 import {debounce, filter} from 'rxjs/operators';
@@ -9,23 +10,26 @@ import {timer} from 'rxjs/internal/observable/timer';
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit, OnDestroy {
+export class SearchComponent implements OnInit {
   @Output() search: EventEmitter<string> = new EventEmitter<string>();
 
-  private inputChange: Subject<any> = new Subject();
-  searchText: string;
+  searchGroup: FormGroup;
 
   constructor() {
   }
 
   ngOnInit() {
-    this.inputChange
+    this.searchGroup = new FormGroup({
+      searchInput: new FormControl()
+    });
+
+    this.searchGroup.valueChanges
       .pipe(
         debounce(() => timer(300)),
         filter((v: any) => {
-          if (v.length > 3) {
+          if (v.searchInput.length > 3) {
             return v;
-          } else if (!v.length) {
+          } else if (!v.searchInput.length) {
             // TODO fix that
             // if return empty string, subscribe is not call
             return 'null';
@@ -33,18 +37,10 @@ export class SearchComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe(v => {
-          this.search.emit(v);
+          this.search.emit(v.searchInput);
         },
         error => console.log(error)
       );
-  }
-
-  onFind(v) {
-    this.inputChange.next(v);
-  }
-
-  ngOnDestroy() {
-    this.inputChange.unsubscribe();
   }
 
 }

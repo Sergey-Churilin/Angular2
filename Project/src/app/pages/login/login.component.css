@@ -5,3 +5,11 @@ form{
   border: 1px solid gray;
   border-radius: 10px;
 }
+
+div.has-error {
+  border: 1px solid red;
+}
+
+p.has-error {
+  color: red;
+}

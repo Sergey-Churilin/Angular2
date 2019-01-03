@@ -38,9 +38,6 @@ export class HeaderComponent implements OnInit {
 
   logOut() {
     this.store.dispatch(new LoginActions.Logout());
-    // this.authService.logout();
-    // this.router.navigate(['../login']);
-    // this.adjustAuthState();
   }
 
   private adjustAuthState() {

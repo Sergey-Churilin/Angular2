@@ -30,8 +30,10 @@ export function coursesReducer(state = initialCoursesState, action: CoursesActio
       };
     }
     case CoursesActionTypes.GET_COURSES_MORE: {
-      return {...state,
-        loading: true};
+      return {
+        ...state,
+        loading: true
+      };
     }
     case CoursesActionTypes.GET_COURSES_MORE_SUCCESS: {
       const moreCourses = [...<Array<Course>>action.payload];
@@ -54,8 +56,10 @@ export function coursesReducer(state = initialCoursesState, action: CoursesActio
       };
     }
     case CoursesActionTypes.GET_COURSE: {
-      return {...state,
-      loading: true};
+      return {
+        ...state,
+        loading: true
+      };
     }
     case CoursesActionTypes.GET_COURSE_SUCCESS: {
       const selectedTask = <Course>action.payload;

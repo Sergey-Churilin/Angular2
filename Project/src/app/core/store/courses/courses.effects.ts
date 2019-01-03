@@ -9,7 +9,7 @@ import {concatMap, switchMap, pluck} from 'rxjs/operators';
 
 import {DataService} from '../../../pages/video-courses-page/data-service.service';
 import * as CoursesActions from './courses.actions';
-import {Course} from "../../../pages/video-courses-page/course.model";
+import {Course} from '../../../pages/video-courses-page/course.model';
 
 @Injectable()
 export class CoursesEffects {
@@ -84,7 +84,6 @@ export class CoursesEffects {
       this.dataService
         .removeItem(<Course>payload)
         .then(course => {
-          // this.router.navigate(['/courses']);
           return new CoursesActions.DeleteCourseSuccess(course);
         })
         .catch(err => new CoursesActions.DeleteCourseError(err)))

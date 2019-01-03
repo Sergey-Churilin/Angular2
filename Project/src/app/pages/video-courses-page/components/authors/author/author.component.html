@@ -1,0 +1,5 @@
+<div class="author">
+  <label for="checkbox{{author.id}}">{{author.name}}</label>
+  <button type="button" class="btn btn-delete" *ngIf="!isCheckboxVisible" (click)="onDeleteAuthor()">x</button>
+  <input type="checkbox" id="{{ 'checkbox' + author.id  }}" *ngIf="isCheckboxVisible" #checkbox (change)="onCheck(checkbox.checked)" [checked]="author.checked">
+</div>

@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 
 import {Store, select} from '@ngrx/store';
 
@@ -23,10 +24,13 @@ export class AddCourseComponent implements OnInit, OnDestroy {
     description: '',
     creationDate: null,
     duration: null,
-    authors: ''
+    authors: []
   };
   show: boolean = false;
   breadCrumbsTitle: string;
+
+  courseForm: FormGroup;
+
   private sub: Subscription;
 
   constructor(
@@ -37,11 +41,28 @@ export class AddCourseComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // prepare form
+    this.courseForm = new FormGroup({
+      title: new FormControl(this.course.title, [Validators.required, Validators.maxLength(50)]),
+      description: new FormControl(this.course.description, [Validators.required, Validators.maxLength(500)]),
+      creationDate: new FormControl(this.course.creationDate, [Validators.required]),
+      duration: new FormControl(this.course.duration, [Validators.required]),
+      authors: new FormControl(this.course.authors,  [Validators.required])
+    });
+
+    // fill form in edit mode
     this.sub = this.store.pipe(select(getSelectedCourse))
       .subscribe(course => {
         if (course) {
-          (<Course>course).creationDate = new Date(course.creationDate);
           this.course = course;
+          this.courseForm.patchValue({
+            title: this.course.title,
+            description: this.course.description,
+            creationDate: this.course.creationDate,
+            duration: this.course.duration,
+            authors: this.course.authors
+        });
+
           this.show = true;
           this.breadCrumbsTitle = course.title;
         }
@@ -61,6 +82,7 @@ export class AddCourseComponent implements OnInit, OnDestroy {
   }
 
   onSave() {
+    this.matchCourseValues();
     if (this.course.id) {
       this.store.dispatch(new CoursesActions.UpdateCourse(this.course as Course));
     } else {
@@ -71,5 +93,17 @@ export class AddCourseComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.router.navigate(['/courses']);
+  }
+
+  hasError(c: FormControl) {
+    if (c.touched && c.errors) {
+      return true;
+    }
+  }
+
+  private matchCourseValues() {
+    Object.keys(this.courseForm.value).forEach(k => {
+        this.course[k] = this.courseForm.value[k];
+    });
   }
 }

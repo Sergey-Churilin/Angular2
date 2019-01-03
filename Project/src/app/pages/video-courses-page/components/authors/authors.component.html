@@ -1,5 +1,22 @@
-<div class="form-group">
+<div class="form-group authors-comp-wrapper" [formGroup]="authorsGroup">
   <label for="authors">Authors</label>
-  <input type="text" class="form-control" name="authors" id="authors" [(ngModel)]="courseAuthors" required
-         placeholder="Authors">
+  <span *ngIf="hasError()"
+        [ngClass]="{'has-error': hasError()}">
+      This field is required
+  </span>
+  <input type="text" class="form-control" [ngClass]="{'has-error': hasError()}"
+         formControlName="authorsInput" id="authors" placeholder="Authors" (click)="showAuthorsSelect()">
+  <div class="pseudo-input-wrapper" >
+    <div class="selected-author">
+      <app-author
+        *ngFor="let author of selectedAuthors"
+        (delete)="onDeleteAuthor($event)" [author]="author" [showCheckbox]="false"></app-author>
+    </div>
+  </div>
+  <div class="authors-wrapper" *ngIf="isAuthorsSelectVisible">
+    <app-author
+      *ngFor="let author of authors"
+       (select)="onSelectAuthor($event)" [author]="author" [showCheckbox]="true"></app-author>
+  </div>
+
 </div>

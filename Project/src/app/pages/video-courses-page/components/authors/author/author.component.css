@@ -1,0 +1,12 @@
+.author {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.author label {
+  width: 100%;
+}
+.btn-delete {
+  padding: 0;
+  margin: 0;
+}

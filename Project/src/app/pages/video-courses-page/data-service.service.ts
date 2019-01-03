@@ -5,7 +5,7 @@ import {Router} from '@angular/router';
 import {Course} from './course.model';
 import {DataServicesModule} from './data-services.module';
 import {LoadingService} from '../../core/services/loading.service';
-import {timeout} from 'rxjs/operators';
+import {delay} from 'rxjs/operators';
 
 @Injectable({
   providedIn: DataServicesModule
@@ -46,18 +46,18 @@ export class DataService {
   }
 
   updateItem(course: Course) {
-    const url = this.router.url;
     const body = JSON.stringify(course);
     const options = {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     };
     return this.http
       .put(`${this.baseUrl}courses/${course.id}`, body, options)
+      .pipe(
+        delay(1000)
+      )
       .toPromise()
       .then(response => {
-        setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
         return <Course>response;
       })
       .catch(error => {
@@ -68,18 +68,18 @@ export class DataService {
   }
 
   createItem(course: Course) {
-    const url = this.router.url;
     const body = JSON.stringify(course);
     const options = {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     };
     return this.http
       .post(`${this.baseUrl}courses`, body, options)
+      .pipe(
+        delay(1000)
+      )
       .toPromise()
       .then(response => {
-        setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
         return <Course>response;
       })
       .catch(error => {
@@ -91,11 +91,12 @@ export class DataService {
   removeItem(course: Course) {
     this.loadingService.showLoadingBlock(true);
     return this.http.delete(`${this.baseUrl}courses/${course.id}`)
+      .pipe(
+        delay(1000)
+      )
       .toPromise()					        // Observeble to Promise
       .then(response => {
-        setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
         return <Course>course;
       })
       .catch(error => {
@@ -108,13 +109,11 @@ export class DataService {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses?${params}`)
       .pipe(
-        timeout(2500)
+        delay(1000)
       )
       .toPromise()
       .then(response => {
-        setTimeout(() => {
-          this.loadingService.showLoadingBlock(false);
-        }, 1000);
+        this.loadingService.showLoadingBlock(false);
         return <Course[]>response;
       })	   // Promise API
       .catch(error => {
@@ -127,11 +126,12 @@ export class DataService {
   private getCourseById(id: number) {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses/${id}`)
+      .pipe(
+        delay(1000)
+      )
       .toPromise()
       .then(response => {
-        setTimeout(() => {
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
         return <Course>response;
       })
       .catch(error => {
