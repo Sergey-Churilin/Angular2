@@ -8,7 +8,7 @@ import {Subscription} from 'rxjs/internal/Subscription';
 import {AuthorizationService} from '../../core/services/authorization.service';
 
 import {AppState} from '../../core/store';
-import * as LoginActions from '../../core/store/login/login.actions';
+import {LoginService} from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +28,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   };
 
-  constructor(private store: Store<AppState>, private authService: AuthorizationService, private router: Router) {
+  constructor(private store: Store<AppState>,
+              private authService: AuthorizationService,
+              private router: Router,
+              private loginService: LoginService) {
   }
 
   ngOnInit() {
@@ -52,7 +55,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   logIn() {
-    this.store.dispatch(new LoginActions.Login(this.loginForm.value));
+    this.loginService.login(this.loginForm.value);
   }
 
   public hasError(c: FormControl): boolean {

@@ -5,10 +5,10 @@ import {Store, select} from '@ngrx/store';
 import {Subscription} from 'rxjs/internal/Subscription';
 
 import {AppState} from '../../../../core/store';
-import * as CoursesActions from '../../../../core/store/courses/courses.actions';
 import {FilterPipe} from '../../../../pipes';
 import {Course} from '../../course.model';
 import {DataService} from '../../data-service.service';
+import {CourseService} from '../../course.service';
 
 @Component({
   selector: 'app-video-courses',
@@ -27,6 +27,7 @@ export class VideoCoursesComponent implements OnInit, OnDestroy {
   constructor(private store: Store<AppState>,
               private filterPipe: FilterPipe,
               private dataService: DataService,
+              private courseService: CourseService,
               private router: Router,
               private route: ActivatedRoute) { }
 
@@ -49,7 +50,9 @@ export class VideoCoursesComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.coursesSub.unsubscribe();
     this.eventsSub.unsubscribe();
-    this.searchSub.unsubscribe();
+    if (this.searchSub) {
+      this.searchSub.unsubscribe();
+    }
   }
 
   onAddCourse() {
@@ -65,12 +68,12 @@ export class VideoCoursesComponent implements OnInit, OnDestroy {
   onDeleteCourse(course: Course) {
     const confirm = window.confirm('Do you really want to delete this course? ');
     if (confirm) {
-      this.store.dispatch(new CoursesActions.DeleteCourse(course));
+      this.courseService.deleteCourse(course);
     }
   }
 
   onLoadMore() {
-    this.store.dispatch(new CoursesActions.GetCoursesMore());
+    this.courseService.getMoreCourses();
   }
 
   onSearch(searchText) {
@@ -84,6 +87,6 @@ export class VideoCoursesComponent implements OnInit, OnDestroy {
   }
 
   private getData() {
-    this.store.dispatch(new CoursesActions.GetCourses());
+    this.courseService.getCourses();
   }
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {debounce, map} from 'rxjs/operators';
+import {debounce, filter} from 'rxjs/operators';
 import {timer} from 'rxjs/internal/observable/timer';
 import {Subscription} from 'rxjs/internal/Subscription';
 
@@ -27,7 +27,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this.valueChangeSub = this.searchGroup.valueChanges
       .pipe(
         debounce(() => timer(300)),
-        map((v: any) => {
+        filter((v: any) => {
           if (v.searchInput.length > 3) {
             return v;
           } else if (!v.searchInput.length) {

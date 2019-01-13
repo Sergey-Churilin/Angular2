@@ -95,7 +95,7 @@ export class CoursesEffects {
       this.dataService
         .removeItem(<Course>payload)
         .pipe(
-          map(course => new CoursesActions.DeleteCourseSuccess(course)),
+          map(course => new CoursesActions.DeleteCourseSuccess(course.value)),
           catchError((error) => of(new CoursesActions.DeleteCourseError(error)))
         ))
   );

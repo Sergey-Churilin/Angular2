@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
+import {FormGroup, FormControl, Validators} from '@angular/forms';
 
 import {Store, select} from '@ngrx/store';
 
@@ -8,9 +8,8 @@ import {Store, select} from '@ngrx/store';
 import {Subscription} from 'rxjs';
 
 import {AppState, getSelectedCourse} from '../../../../core/store';
-import * as CoursesActions from '../../../../core/store/courses/courses.actions';
 import {Course} from '../../course.model';
-import {DataService} from '../../data-service.service';
+import {CourseService} from '../../course.service';
 
 @Component({
   selector: 'app-add-course',
@@ -38,7 +37,7 @@ export class AddCourseComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<AppState>,
     private route: ActivatedRoute,
-    private courseDataService: DataService,
+    private courseService: CourseService,
     private router: Router) {
   }
 
@@ -74,7 +73,7 @@ export class AddCourseComponent implements OnInit, OnDestroy {
       .subscribe(params => {
         const id = params.get('id');
         if (id) {
-          this.store.dispatch(new CoursesActions.GetCourse(+id));
+          this.courseService.getCourse(id);
         }
       });
   }
@@ -87,10 +86,10 @@ export class AddCourseComponent implements OnInit, OnDestroy {
   onSave() {
     this.matchCourseValues();
     if (this.course.id) {
-      this.store.dispatch(new CoursesActions.UpdateCourse(this.course as Course));
+      this.courseService.updateCourse(this.course as Course);
     } else {
       this.course.id = +(Math.random() * 10000).toFixed();
-      this.store.dispatch(new CoursesActions.CreateCourse(<Course>this.course));
+      this.courseService.createCourse(this.course as Course);
     }
   }
 

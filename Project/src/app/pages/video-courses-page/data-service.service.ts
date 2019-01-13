@@ -2,11 +2,13 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
 
+import {delay, tap, map} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
+import {Observable} from 'rxjs/internal/Observable';
+
 import {Course} from './course.model';
 import {DataServicesModule} from './data-services.module';
 import {LoadingService} from '../../core/services/loading.service';
-import {delay, tap} from 'rxjs/operators';
-import {Observable} from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: DataServicesModule
@@ -82,9 +84,8 @@ export class DataService {
     return this.http.delete(`${this.baseUrl}courses/${course.id}`)
       .pipe(
         delay(1000),
-        tap(() => {
-          this.loadingService.showLoadingBlock(false);
-        })
+        tap(() => this.loadingService.showLoadingBlock(false)),
+        map(() => of(course))
       );
   }
 

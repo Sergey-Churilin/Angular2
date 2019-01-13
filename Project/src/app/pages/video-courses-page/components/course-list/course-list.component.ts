@@ -23,14 +23,14 @@ export class CourseListComponent implements OnInit, OnDestroy {
   private courseDataSub: Subscription;
 
   constructor(private router: Router,
-              private courseDataService: DataService,
+              private dataService: DataService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.paramMapSub = this.route.paramMap
       .subscribe(params => {
         if (+params.get('editedCourseId')) {
-          this.courseDataSub = this.courseDataService.getItemById(+params.get('editedCourseId'))
+          this.courseDataSub = this.dataService.getItemById(+params.get('editedCourseId'))
             .subscribe(course => {
               if (course) {
                 this.editedCourse = course;
@@ -42,7 +42,9 @@ export class CourseListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.paramMapSub.unsubscribe();
-    this.courseDataSub.unsubscribe();
+    if (this.courseDataSub) {
+      this.courseDataSub.unsubscribe();
+    }
   }
 
   onEditCourse(course: Course) {

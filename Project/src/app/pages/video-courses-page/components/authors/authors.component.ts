@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, forwardRef, ViewEncapsulation, OnDestroy} from '@angular/core';
-// import {ViewEncapsulation} from '@angular/cli/lib/config/schema';
 
 import {ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {Author} from './author.model';
@@ -8,7 +7,7 @@ import {Store, select} from '@ngrx/store';
 import {Subscription} from 'rxjs/internal/Subscription';
 
 import {AppState} from '../../../../core/store';
-import * as AuthorsActions from '../../../../core/store/authors/authors.actions';
+import {AuthorsService} from './authors.service';
 
 @Component({
   selector: 'app-authors',
@@ -37,10 +36,10 @@ export class AuthorsComponent implements OnInit, OnDestroy, ControlValueAccessor
 
   private authorsSub: Subscription;
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>, private authorsService: AuthorsService) { }
 
   ngOnInit() {
-    this.store.dispatch(new AuthorsActions.AdjustState());
+    this.authorsService.adjustSelectedAuthors();
     this.authorsInput = new FormControl('', {
       validators: [Validators.required],
       updateOn: 'blur'
@@ -55,8 +54,7 @@ export class AuthorsComponent implements OnInit, OnDestroy, ControlValueAccessor
         this.selectedAuthors = authors.selectedAuthors;
       });
 
-    // get list of authors
-    this.store.dispatch(new AuthorsActions.GetAuthors());
+    this.authorsService.prepareAuthors();
   }
 
   ngOnDestroy() {
@@ -64,15 +62,15 @@ export class AuthorsComponent implements OnInit, OnDestroy, ControlValueAccessor
   }
 
   onDeleteAuthor(author) {
-    this.store.dispatch(new AuthorsActions.UnselectAuthor(author));
+    this.authorsService.unselectAuthor(author);
     this.onChange(this.selectedAuthors);
   }
 
   onSelectAuthor(params) {
     if (params.checked) {
-      this.store.dispatch(new AuthorsActions.SelectAuthor(params.author));
+      this.authorsService.selectAuthor(params.author);
     } else {
-      this.store.dispatch(new AuthorsActions.UnselectAuthor(params.author));
+      this.authorsService.unselectAuthor(params.author);
     }
 
     this.onChange(this.selectedAuthors);
@@ -81,9 +79,11 @@ export class AuthorsComponent implements OnInit, OnDestroy, ControlValueAccessor
   writeValue(authors: Array<Author>): void {
     if (authors && authors.length) {
       authors.forEach( a => {
-        a.checked && this.store.dispatch(new AuthorsActions.SelectAuthor(a));
+        if (a.checked) {
+          this.authorsService.selectAuthor(a);
+        }
       });
-      this.store.dispatch(new AuthorsActions.AdjustAuthors());
+      this.authorsService.adjustAuthors();
     }
   }
 

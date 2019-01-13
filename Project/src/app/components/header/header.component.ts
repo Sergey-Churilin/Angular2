@@ -1,12 +1,10 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {Store} from '@ngrx/store';
 
 import {Subscription} from 'rxjs/internal/Subscription';
 
-import {AppState} from '../../core/store';
-import * as LoginActions from '../../core/store/login/login.actions';
 import {AuthorizationService} from '../../core/services/authorization.service';
+import {LoginService} from '../../pages/login/login.service';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +18,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private routerSub: Subscription;
   private userInfoSub: Subscription;
 
-  constructor(private store: Store<AppState>, public authService: AuthorizationService, private router: Router) {}
+  constructor(public authService: AuthorizationService, private loginService: LoginService, private router: Router) {}
 
   ngOnInit() {
     this.routerSub = this.router.events.subscribe(event => {
@@ -46,7 +44,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logOut() {
-    this.store.dispatch(new LoginActions.Logout());
+    this.loginService.logout();
   }
 
   private adjustAuthState() {
