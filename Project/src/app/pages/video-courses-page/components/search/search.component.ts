@@ -1,19 +1,20 @@
 import {Component, OnInit, EventEmitter, Output, OnDestroy} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {Subject} from 'rxjs/internal/Subject';
-import {debounce, filter} from 'rxjs/operators';
+import {debounce, map} from 'rxjs/operators';
 import {timer} from 'rxjs/internal/observable/timer';
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
   @Output() search: EventEmitter<string> = new EventEmitter<string>();
 
   searchGroup: FormGroup;
+  private valueChangeSub: Subscription;
 
   constructor() {
   }
@@ -23,10 +24,10 @@ export class SearchComponent implements OnInit {
       searchInput: new FormControl()
     });
 
-    this.searchGroup.valueChanges
+    this.valueChangeSub = this.searchGroup.valueChanges
       .pipe(
         debounce(() => timer(300)),
-        filter((v: any) => {
+        map((v: any) => {
           if (v.searchInput.length > 3) {
             return v;
           } else if (!v.searchInput.length) {
@@ -41,6 +42,10 @@ export class SearchComponent implements OnInit {
         },
         error => console.log(error)
       );
+  }
+
+  ngOnDestroy() {
+    this.valueChangeSub.unsubscribe();
   }
 
 }

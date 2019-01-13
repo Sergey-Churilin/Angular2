@@ -12,8 +12,10 @@ export function authorsReducer(state = initialAuthorsState, action: AuthorsActio
     }
     case AuthorsActionTypes.GET_AUTHORS_SUCCESS: {
       const data = [...<Array<Author>>action.payload];
-      const selectedAuthors = state.selectedAuthors;
-      !!selectedAuthors.length && adjustAuthors(data, selectedAuthors);
+      const selectedAuthors = [...state.selectedAuthors];
+      if (selectedAuthors.length) {
+        adjustAuthors(data, selectedAuthors);
+      }
 
       return {
         ...state,
@@ -33,8 +35,7 @@ export function authorsReducer(state = initialAuthorsState, action: AuthorsActio
     }
     case AuthorsActionTypes.SELECT_AUTHOR: {
       const author = action.payload;
-      const selectedAuthors = state.selectedAuthors;
-      selectedAuthors.push(author);
+      const selectedAuthors = [...state.selectedAuthors, author];
       return {
         ...state,
         selectedAuthors
@@ -42,7 +43,7 @@ export function authorsReducer(state = initialAuthorsState, action: AuthorsActio
     }
     case AuthorsActionTypes.UNSELECT_AUTHOR: {
       const author = action.payload;
-      const selectedAuthors = state.selectedAuthors;
+      const selectedAuthors = [...state.selectedAuthors];
       let index;
       selectedAuthors.forEach((a, i) => {
         if (a.id === author.id) {
@@ -50,7 +51,7 @@ export function authorsReducer(state = initialAuthorsState, action: AuthorsActio
         }
       });
       selectedAuthors.splice(index, 1);
-      const data = state.data;
+      const data = [...state.data];
       adjustAuthors(data, selectedAuthors);
       return {
         ...state,
@@ -59,8 +60,8 @@ export function authorsReducer(state = initialAuthorsState, action: AuthorsActio
       };
     }
     case AuthorsActionTypes.ADJUST_AUTHORS: {
-      const data = state.data;
-      const selectedAuthors = state.selectedAuthors;
+      const data = [...state.data];
+      const selectedAuthors = [...state.selectedAuthors];
       adjustAuthors(data, selectedAuthors);
       return {
         ...state,

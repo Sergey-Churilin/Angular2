@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormGroup, FormControl, Validators, AbstractControl} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Store} from '@ngrx/store';
+
+import {Subscription} from 'rxjs/internal/Subscription';
 
 import {AuthorizationService} from '../../core/services/authorization.service';
 
@@ -14,9 +16,10 @@ import * as LoginActions from '../../core/store/login/login.actions';
   styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   validationMessage: string;
+  private valueChangesSub: Subscription;
   private validationMessages = {
     email: {
       required: 'Email address is required.',
@@ -30,24 +33,30 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+'), Validators.email]),
+      email: new FormControl('',
+        [Validators.required,
+          Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+'),
+          Validators.email]
+      ),
       password: new FormControl('', [Validators.required, Validators.minLength(8)])
     });
 
-    this.loginForm.valueChanges
+    this.valueChangesSub = this.loginForm.valueChanges
       .subscribe(v => {
         this.setValidationMessage(this.loginForm.get('email'), 'email');
       });
+  }
+
+  ngOnDestroy() {
+    this.valueChangesSub.unsubscribe();
   }
 
   logIn() {
     this.store.dispatch(new LoginActions.Login(this.loginForm.value));
   }
 
-  hasError(c: FormControl) {
-    if (c.touched && c.errors) {
-      return true;
-    }
+  public hasError(c: FormControl): boolean {
+    return !!(c.touched && c.errors);
   }
 
   private setValidationMessage(c: AbstractControl, controlName: string) {

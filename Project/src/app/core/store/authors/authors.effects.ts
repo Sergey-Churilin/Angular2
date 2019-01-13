@@ -4,7 +4,8 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 
 // rxjs
 import {Observable} from 'rxjs/internal/Observable';
-import {switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
 
 import * as AuthorsActions from './authors.actions';
 import {AuthorsService} from '../../../pages/video-courses-page/components/authors/authors.service';
@@ -21,7 +22,9 @@ export class AuthorsEffects {
     switchMap((action: AuthorsActions.GetAuthors) =>
       this.authorsService
         .getAuthors()
-        .then(authors => new AuthorsActions.GetAuthorsSuccess(authors))
-        .catch(err => new AuthorsActions.GetAuthorsError(err)))
+        .pipe(
+          map(authors => new AuthorsActions.GetAuthorsSuccess(authors)),
+          catchError((error) => of(new AuthorsActions.GetAuthorsError(error)))
+        ))
   );
 }

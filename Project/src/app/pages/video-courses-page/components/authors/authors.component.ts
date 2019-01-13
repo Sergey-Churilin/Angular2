@@ -1,9 +1,11 @@
-import {Component, Input, OnInit, forwardRef, ViewEncapsulation} from '@angular/core';
+import {Component, Input, OnInit, forwardRef, ViewEncapsulation, OnDestroy} from '@angular/core';
 // import {ViewEncapsulation} from '@angular/cli/lib/config/schema';
 
 import {ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
 import {Author} from './author.model';
 import {Store, select} from '@ngrx/store';
+
+import {Subscription} from 'rxjs/internal/Subscription';
 
 import {AppState} from '../../../../core/store';
 import * as AuthorsActions from '../../../../core/store/authors/authors.actions';
@@ -20,7 +22,7 @@ import * as AuthorsActions from '../../../../core/store/authors/authors.actions'
   encapsulation: ViewEncapsulation.None
 })
 
-export class AuthorsComponent implements OnInit, ControlValueAccessor {
+export class AuthorsComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input('authors') courseAuthors: Array<Author>;
 
   authors: Array<Author> = [];
@@ -32,6 +34,8 @@ export class AuthorsComponent implements OnInit, ControlValueAccessor {
 
   authorsGroup: FormGroup;
   authorsInput: FormControl;
+
+  private authorsSub: Subscription;
 
   constructor(private store: Store<AppState>) { }
 
@@ -45,7 +49,7 @@ export class AuthorsComponent implements OnInit, ControlValueAccessor {
       authorsInput: this.authorsInput
     });
 
-    this.store.pipe(select('authors'))
+    this.authorsSub = this.store.pipe(select('authors'))
       .subscribe((authors) => {
         this.authors = authors.data;
         this.selectedAuthors = authors.selectedAuthors;
@@ -53,6 +57,10 @@ export class AuthorsComponent implements OnInit, ControlValueAccessor {
 
     // get list of authors
     this.store.dispatch(new AuthorsActions.GetAuthors());
+  }
+
+  ngOnDestroy() {
+    this.authorsSub.unsubscribe();
   }
 
   onDeleteAuthor(author) {

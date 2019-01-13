@@ -1,5 +1,7 @@
-import { OnInit,  Component, Input, Output, EventEmitter } from '@angular/core';
+import {OnInit, Component, Input, Output, EventEmitter, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+
+import {Subscription} from 'rxjs/internal/Subscription';
 
 import {Course} from '../../course.model';
 import {DataService} from '../../data-service.service';
@@ -10,30 +12,37 @@ import {DataService} from '../../data-service.service';
   styleUrls: ['./course-list.component.css']
 })
 
-export class CourseListComponent implements OnInit {
+export class CourseListComponent implements OnInit, OnDestroy {
   @Input() courses: Array<Course>;
 
   @Output() edit: EventEmitter<Course> = new EventEmitter<Course>();
   @Output() delete: EventEmitter<Course> = new EventEmitter<Course>();
 
   private editedCourse: Course;
+  private paramMapSub: Subscription;
+  private courseDataSub: Subscription;
 
   constructor(private router: Router,
               private courseDataService: DataService,
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.route.paramMap
+    this.paramMapSub = this.route.paramMap
       .subscribe(params => {
         if (+params.get('editedCourseId')) {
-          this.courseDataService.getItemById(+params.get('editedCourseId'))
-            .then(course => {
+          this.courseDataSub = this.courseDataService.getItemById(+params.get('editedCourseId'))
+            .subscribe(course => {
               if (course) {
                 this.editedCourse = course;
               }
             });
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.paramMapSub.unsubscribe();
+    this.courseDataSub.unsubscribe();
   }
 
   onEditCourse(course: Course) {

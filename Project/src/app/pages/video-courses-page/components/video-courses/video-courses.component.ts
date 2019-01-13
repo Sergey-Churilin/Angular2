@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Store, select} from '@ngrx/store';
 
+import {Subscription} from 'rxjs/internal/Subscription';
 
 import {AppState} from '../../../../core/store';
 import * as CoursesActions from '../../../../core/store/courses/courses.actions';
@@ -15,9 +16,13 @@ import {DataService} from '../../data-service.service';
   styleUrls: ['./video-courses.component.css'],
   providers: [FilterPipe]
 })
-export class VideoCoursesComponent implements OnInit {
+export class VideoCoursesComponent implements OnInit, OnDestroy {
   courses: Array<Course> = [];
   filteredCourses: Array<Course> = [];
+
+  private coursesSub: Subscription;
+  private eventsSub: Subscription;
+  private searchSub: Subscription;
 
   constructor(private store: Store<AppState>,
               private filterPipe: FilterPipe,
@@ -26,19 +31,25 @@ export class VideoCoursesComponent implements OnInit {
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.store.pipe(select('courses'))
+    this.coursesSub = this.store.pipe(select('courses'))
       .subscribe((courses) => {
         this.courses = courses.data.map(c => {c.creationDate = new Date(c.creationDate); return c; });
         this.filteredCourses = this.courses.slice();
       });
 
-    this.router.events.subscribe( event => {
+    this.eventsSub = this.router.events.subscribe( event => {
       // this code is not performed during first component init
       if (event instanceof NavigationEnd && event.url === '/courses') {
         this.getData();
       }
     });
     this.getData();
+  }
+
+  ngOnDestroy() {
+    this.coursesSub.unsubscribe();
+    this.eventsSub.unsubscribe();
+    this.searchSub.unsubscribe();
   }
 
   onAddCourse() {
@@ -65,8 +76,8 @@ export class VideoCoursesComponent implements OnInit {
   onSearch(searchText) {
     // this.filteredCourses = this.filterPipe.transform(this.courses, searchText);
 
-    this.dataService.search(searchText)
-      .then((courses) => {
+    this.searchSub = this.dataService.search(searchText)
+      .subscribe((courses) => {
         this.courses = courses.map(c => {c.creationDate = new Date(c.creationDate); return c; });
         this.filteredCourses = this.courses.slice();
       });

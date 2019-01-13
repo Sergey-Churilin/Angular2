@@ -1,5 +1,7 @@
-import {Component, OnInit, Input, forwardRef} from '@angular/core';
+import {Component, OnInit, Input, forwardRef, OnDestroy} from '@angular/core';
 import {ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validators} from '@angular/forms';
+
+import {Subscription} from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-duration',
@@ -11,7 +13,7 @@ import {ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, Validat
     multi: true
   }]
 })
-export class DurationComponent implements OnInit, ControlValueAccessor {
+export class DurationComponent implements OnInit, OnDestroy, ControlValueAccessor {
   @Input('duration') durationMinutes: string;
 
   onChange: Function;
@@ -19,6 +21,8 @@ export class DurationComponent implements OnInit, ControlValueAccessor {
 
   durationGroup: FormGroup;
   durationInput: FormControl;
+
+  private valueChangesSub: Subscription;
 
   ngOnInit() {
     this.durationInput = new FormControl('', {
@@ -29,7 +33,7 @@ export class DurationComponent implements OnInit, ControlValueAccessor {
       durationInput: this.durationInput
     });
 
-    this.durationInput.valueChanges
+    this.valueChangesSub = this.durationInput.valueChanges
       .subscribe(v => {
           if (!this.durationInput.errors && this.onChange) {
             this.onChange(v);
@@ -39,10 +43,12 @@ export class DurationComponent implements OnInit, ControlValueAccessor {
       );
   }
 
-  hasError(c: FormControl) {
-    if (c.touched && c.errors) {
-      return true;
-    }
+  ngOnDestroy() {
+    this.valueChangesSub.unsubscribe();
+  }
+
+  public hasError(c: FormControl): boolean {
+    return !!(c.touched && c.errors);
   }
 
   writeValue(obj: any): void {

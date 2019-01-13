@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
+import {Observable} from 'rxjs/internal/Observable';
+
 import {DataServicesModule} from '../../data-services.module';
 import {Author} from './author.model';
 
@@ -14,15 +16,7 @@ export class AuthorsService {
   constructor( private http: HttpClient ) {}
 
 
-   getAuthors(): Promise<Author[]> {
-    return this.http.get(`${this.baseUrl}authors`)
-      .toPromise()
-      .then(response => {
-        return <Author[]>response;
-      })
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+   getAuthors(): Observable<any> {
+    return this.http.get(`${this.baseUrl}authors`);
   }
 }

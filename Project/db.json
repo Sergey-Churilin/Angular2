@@ -111,9 +111,15 @@
       "id": 7330,
       "title": "Course160",
       "description": "123123",
-      "creationDate": null,
-      "duration": null,
-      "authors": ""
+      "creationDate": 1541883600000,
+      "duration": 88,
+      "authors": [
+        {
+          "id": "5b7a8462e720a86db64774e7",
+          "name": "Padilla Berger",
+          "checked": true
+        }
+      ]
     },
     {
       "id": 7892,

@@ -5,7 +5,8 @@ import {Actions, Effect, ofType} from '@ngrx/effects';
 
 // rxjs
 import {Observable} from 'rxjs/internal/Observable';
-import {concatMap, switchMap, pluck} from 'rxjs/operators';
+import {concatMap, switchMap, pluck, catchError, map} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
 
 import {DataService} from '../../../pages/video-courses-page/data-service.service';
 import * as CoursesActions from './courses.actions';
@@ -23,8 +24,10 @@ export class CoursesEffects {
     switchMap((action: CoursesActions.GetCourses) =>
       this.dataService
         .getList()
-        .then(courses => new CoursesActions.GetCoursesSuccess(courses))
-        .catch(err => new CoursesActions.GetCoursesError(err)))
+        .pipe(
+          map(courses =>  new CoursesActions.GetCoursesSuccess(courses)),
+          catchError((error) => of(new CoursesActions.GetCoursesError(error)))
+        ))
   );
 
   @Effect()
@@ -33,8 +36,10 @@ export class CoursesEffects {
     switchMap((action: CoursesActions.GetCoursesMore) =>
       this.dataService
         .getNextPage()
-        .then(courses => new CoursesActions.GetCoursesMoreSuccess(courses))
-        .catch(err => new CoursesActions.GetCoursesMoreError(err)))
+        .pipe(
+          map(courses =>  new CoursesActions.GetCoursesMoreSuccess(courses)),
+          catchError((error) => of(new CoursesActions.GetCoursesMoreError(error)))
+        ))
   );
 
   @Effect()
@@ -44,8 +49,10 @@ export class CoursesEffects {
     switchMap(payload =>
       this.dataService
         .getItemById(+payload)
-        .then(course => new CoursesActions.GetCourseSuccess(<Course>course))
-        .catch(err => new CoursesActions.GetCourseError(err)))
+        .pipe(
+          map(course =>  new CoursesActions.GetCourseSuccess(<Course>course)),
+          catchError((error) => of(new CoursesActions.GetCourseError(error)))
+        ))
   );
 
   @Effect()
@@ -55,11 +62,13 @@ export class CoursesEffects {
     concatMap((payload) =>
       this.dataService
         .updateItem(<Course>payload)
-        .then(course => {
-          this.router.navigate(['/courses']);
-          return new CoursesActions.UpdateCourseSuccess(course);
-        })
-        .catch(err => new CoursesActions.UpdateCourseError(err)))
+        .pipe(
+          map(course => {
+            this.router.navigate(['/courses']);
+            return new CoursesActions.UpdateCourseSuccess(course);
+          }),
+          catchError((error) => of(new CoursesActions.UpdateCourseError(error)))
+        ))
   );
 
   @Effect()
@@ -69,11 +78,13 @@ export class CoursesEffects {
     concatMap(payload =>
       this.dataService
         .createItem(<Course>payload)
-        .then(course => {
-          this.router.navigate(['/courses']);
-          return new CoursesActions.CreateCourseSuccess(course);
-        })
-        .catch(err => new CoursesActions.CreateCourseError(err)))
+        .pipe(
+          map(course => {
+            this.router.navigate(['/courses']);
+            return new CoursesActions.CreateCourseSuccess(course);
+          }),
+          catchError((error) => of(new CoursesActions.CreateCourseError(error)))
+        ))
   );
 
   @Effect()
@@ -83,9 +94,9 @@ export class CoursesEffects {
     concatMap(payload =>
       this.dataService
         .removeItem(<Course>payload)
-        .then(course => {
-          return new CoursesActions.DeleteCourseSuccess(course);
-        })
-        .catch(err => new CoursesActions.DeleteCourseError(err)))
+        .pipe(
+          map(course => new CoursesActions.DeleteCourseSuccess(course)),
+          catchError((error) => of(new CoursesActions.DeleteCourseError(error)))
+        ))
   );
 }

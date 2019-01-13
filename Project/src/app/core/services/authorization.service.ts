@@ -1,7 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 
+// rxjs
 import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {Observable} from 'rxjs/internal/Observable';
+import {delay, tap, map} from 'rxjs/operators';
+import {of} from 'rxjs/internal/observable/of';
 
 import {User} from '../../user.model';
 import {LoadingService} from './loading.service';
@@ -16,81 +20,64 @@ export class AuthorizationService {
 
   constructor(private http: HttpClient, private loadingService: LoadingService) {}
 
-  login(loginData: Partial<User>) {
+  login(loginData: Partial<User>): Observable<any> {
     this.loadingService.showLoadingBlock(false);
 
     return this.addUser(loginData as User)
-      .then(user => {
-        setTimeout(() => {
+      .pipe(
+        delay(1000),
+        tap(user => {
+          localStorage.setItem('user', JSON.stringify(user));
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
-        localStorage.setItem('user', JSON.stringify(user));
-        return Promise.resolve(user);
-      });
+        })
+      );
   }
 
-  logout() {
+  logout(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user'));
     return this.removeUser(user)
-      .then(() => {
-        setTimeout(() => {
+      .pipe(
+        delay(1000),
+        tap(() => {
+          localStorage.clear();
+          this.userInfo.next(null);
           this.loadingService.showLoadingBlock(false);
-        }, 1000);
-        localStorage.clear();
-        this.userInfo.next(null);
-        return Promise.resolve(user);
-      });
+        })
+      );
   }
 
   isAuthenticated() {
     return !!localStorage.getItem('user');
   }
 
-  private addUser(user: User) {
+  private addUser(user: User): Observable<any> {
     return this.getUserByEmail(user.email)
-      .then((existedUser) => {
-        if (existedUser) {
-          return Promise.resolve(existedUser);
-        } else {
-          return this.createUser(user);
-        }
-      });
+      .pipe(map(existedUser => {
+      if (existedUser) {
+        return of(existedUser);
+      } else {
+        return this.createUser(user);
+      }
+    }));
   }
 
-  private createUser(user: User) {
+  private createUser(user: User): Observable<any> {
     user.id = +(Math.random() * 10000).toFixed();
     const body = JSON.stringify(user);
     const options = {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
     };
     return this.http
-      .post(`${this.baseUrl}profile`, body, options)
-      .toPromise()
-      .then(response => <User>response)
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+      .post(`${this.baseUrl}profile`, body, options);
   }
 
-  private getUserByEmail(email: string) {
+  private getUserByEmail(email: string): Observable<any> {
     return this.http.get(`${this.baseUrl}profile?email_like=${email}`)
-      .toPromise()
-      .then(response => <User>response[0])
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+      .pipe(map(response => of(<User>response[0])));
   }
 
-  private removeUser(user: User) {
-    return this.http.delete(`${this.baseUrl}profile/${user.id}`)
-      .toPromise()
-      .then(response => <User>response)
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+  private removeUser(user: User): Observable<any> {
+    return this.http.delete(`${this.baseUrl}profile/${user.id}`);
   }
 
   private getUserInfo() {

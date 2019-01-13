@@ -21,12 +21,8 @@ input.has-error {
   padding: 0 10px;
 }
 
-.selected-author {
-  /*max-width: 130px;*/
-}
-
-.selected-author .author {
-  align-items: baseline !important;
+.pseudo-input-wrapper .selected-author .author {
+  align-items: baseline;
   background: #dddbdb;
   border-radius: 6px;
   padding: 0 4px;

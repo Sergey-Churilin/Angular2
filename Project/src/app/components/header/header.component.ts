@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 import {Store} from '@ngrx/store';
 
-import {AppState, getLoginData, getLoginState} from '../../core/store';
+import {Subscription} from 'rxjs/internal/Subscription';
+
+import {AppState} from '../../core/store';
 import * as LoginActions from '../../core/store/login/login.actions';
 import {AuthorizationService} from '../../core/services/authorization.service';
 
@@ -12,20 +14,22 @@ import {AuthorizationService} from '../../core/services/authorization.service';
   styleUrls: ['./header.component.css']
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   public showUserInfo: boolean;
   public userName: string;
+  private routerSub: Subscription;
+  private userInfoSub: Subscription;
 
   constructor(private store: Store<AppState>, public authService: AuthorizationService, private router: Router) {}
 
   ngOnInit() {
-    this.router.events.subscribe(event => {
+    this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.adjustAuthState();
       }
     });
 
-    this.authService.userInfo
+    this.userInfoSub = this.authService.userInfo
       .subscribe((userInfo: any) => {
           if (userInfo) {
             this.userName = userInfo.email;
@@ -34,6 +38,11 @@ export class HeaderComponent implements OnInit {
         },
         (error) => console.log(error)
       );
+  }
+
+  ngOnDestroy() {
+    this.routerSub.unsubscribe();
+    this.userInfoSub.unsubscribe();
   }
 
   logOut() {

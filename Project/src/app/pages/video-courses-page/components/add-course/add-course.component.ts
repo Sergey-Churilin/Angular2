@@ -31,7 +31,9 @@ export class AddCourseComponent implements OnInit, OnDestroy {
 
   courseForm: FormGroup;
 
-  private sub: Subscription;
+  private paramMapSub: Subscription;
+
+  private selectedCourseSub: Subscription;
 
   constructor(
     private store: Store<AppState>,
@@ -51,7 +53,7 @@ export class AddCourseComponent implements OnInit, OnDestroy {
     });
 
     // fill form in edit mode
-    this.sub = this.store.pipe(select(getSelectedCourse))
+    this.selectedCourseSub = this.store.pipe(select(getSelectedCourse))
       .subscribe(course => {
         if (course) {
           this.course = course;
@@ -68,7 +70,7 @@ export class AddCourseComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.route.paramMap
+    this.paramMapSub = this.route.paramMap
       .subscribe(params => {
         const id = params.get('id');
         if (id) {
@@ -78,7 +80,8 @@ export class AddCourseComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    this.selectedCourseSub.unsubscribe();
+    this.paramMapSub.unsubscribe();
   }
 
   onSave() {
@@ -95,10 +98,8 @@ export class AddCourseComponent implements OnInit, OnDestroy {
     this.router.navigate(['/courses']);
   }
 
-  hasError(c: FormControl) {
-    if (c.touched && c.errors) {
-      return true;
-    }
+  public hasError(c: FormControl): boolean {
+    return !!(c.touched && c.errors);
   }
 
   private matchCourseValues() {

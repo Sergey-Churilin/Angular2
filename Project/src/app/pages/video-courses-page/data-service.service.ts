@@ -5,7 +5,8 @@ import {Router} from '@angular/router';
 import {Course} from './course.model';
 import {DataServicesModule} from './data-services.module';
 import {LoadingService} from '../../core/services/loading.service';
-import {delay} from 'rxjs/operators';
+import {delay, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: DataServicesModule
@@ -23,12 +24,12 @@ export class DataService {
   ) {
   }
 
-  getList(): Promise<Course[]> {
+  getList(): Observable<Course[]> {
     const params = `_page=${this.curPage}&_limit=${this.limit}`;
     return this.getCourses(params);
   }
 
-  getNextPage(): Promise<Course[]> {
+  getNextPage(): Observable<Course[]> {
     this.curPage++;
     return this.getList();
   }
@@ -45,7 +46,7 @@ export class DataService {
     return this.getCourseById(id);
   }
 
-  updateItem(course: Course) {
+  updateItem(course: Course): Observable<any> {
     const body = JSON.stringify(course);
     const options = {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -53,21 +54,15 @@ export class DataService {
     return this.http
       .put(`${this.baseUrl}courses/${course.id}`, body, options)
       .pipe(
-        delay(1000)
-      )
-      .toPromise()
-      .then(response => {
+        delay(1000),
+        tap(() => {
           this.loadingService.showLoadingBlock(false);
-        return <Course>response;
-      })
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+        })
+      );
 
   }
 
-  createItem(course: Course) {
+  createItem(course: Course): Observable<any> {
     const body = JSON.stringify(course);
     const options = {
       headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -75,69 +70,43 @@ export class DataService {
     return this.http
       .post(`${this.baseUrl}courses`, body, options)
       .pipe(
-        delay(1000)
-      )
-      .toPromise()
-      .then(response => {
+        delay(1000),
+        tap(() => {
           this.loadingService.showLoadingBlock(false);
-        return <Course>response;
-      })
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+        })
+      );
   }
 
-  removeItem(course: Course) {
+  removeItem(course: Course): Observable<any> {
     this.loadingService.showLoadingBlock(true);
     return this.http.delete(`${this.baseUrl}courses/${course.id}`)
       .pipe(
-        delay(1000)
-      )
-      .toPromise()					        // Observeble to Promise
-      .then(response => {
+        delay(1000),
+        tap(() => {
           this.loadingService.showLoadingBlock(false);
-        return <Course>course;
-      })
-      .catch(error => {
-        console.log('Error message');
-        return Promise.reject(error.message || error);
-      });
+        })
+      );
   }
 
-  private getCourses(params): Promise<Course[]> {
+  private getCourses(params): Observable<any> {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses?${params}`)
       .pipe(
-        delay(1000)
-      )
-      .toPromise()
-      .then(response => {
-        this.loadingService.showLoadingBlock(false);
-        return <Course[]>response;
-      })	   // Promise API
-      .catch(error => {
-        console.log('Error message');
-        this.loadingService.showLoadingBlock(false);
-        return Promise.reject(error.message || error);
-      });
+        delay(1000),
+        tap(() => {
+          this.loadingService.showLoadingBlock(false);
+        })
+      );
   }
 
-  private getCourseById(id: number) {
+  private getCourseById(id: number): Observable<any> {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses/${id}`)
       .pipe(
-        delay(1000)
-      )
-      .toPromise()
-      .then(response => {
+        delay(1000),
+        tap(() => {
           this.loadingService.showLoadingBlock(false);
-        return <Course>response;
-      })
-      .catch(error => {
-        console.log('Error message');
-        this.loadingService.showLoadingBlock(false);
-        return Promise.reject(error.message || error);
-      });
+        })
+      );
   }
 }
