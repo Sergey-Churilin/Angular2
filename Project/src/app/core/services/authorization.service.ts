@@ -25,7 +25,7 @@ export class AuthorizationService {
 
     return this.addUser(loginData as User)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(user => {
           localStorage.setItem('user', JSON.stringify(user));
           this.loadingService.showLoadingBlock(false);
@@ -37,7 +37,7 @@ export class AuthorizationService {
     const user = JSON.parse(localStorage.getItem('user'));
     return this.removeUser(user)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => {
           localStorage.clear();
           this.userInfo.next(null);

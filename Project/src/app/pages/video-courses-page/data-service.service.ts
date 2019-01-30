@@ -56,7 +56,7 @@ export class DataService {
     return this.http
       .put(`${this.baseUrl}courses/${course.id}`, body, options)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => {
           this.loadingService.showLoadingBlock(false);
         })
@@ -72,7 +72,7 @@ export class DataService {
     return this.http
       .post(`${this.baseUrl}courses`, body, options)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => {
           this.loadingService.showLoadingBlock(false);
         })
@@ -83,7 +83,7 @@ export class DataService {
     this.loadingService.showLoadingBlock(true);
     return this.http.delete(`${this.baseUrl}courses/${course.id}`)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => this.loadingService.showLoadingBlock(false)),
         map(() => of(course))
       );
@@ -93,7 +93,7 @@ export class DataService {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses?${params}`)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => {
           this.loadingService.showLoadingBlock(false);
         })
@@ -104,7 +104,7 @@ export class DataService {
     this.loadingService.showLoadingBlock(true);
     return this.http.get(`${this.baseUrl}courses/${id}`)
       .pipe(
-        delay(1000),
+        delay(1000), // to simulate response delay
         tap(() => {
           this.loadingService.showLoadingBlock(false);
         })
